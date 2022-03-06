@@ -1,5 +1,6 @@
 #!/bin/bash
 
+declare -A arrKey
 declare -A arrData
 declare -A arrLinkWarning
 
@@ -8,13 +9,16 @@ if [ "${1}" != "" ]; then
   BLOG_URL="${1}"
 fi
 
+LIST_PATH="tmp/list.html"
+LINK_WARNING_PATH="tmp/warning.txt"
+
 function check_link()
 {
 #  echo "check_link(${filename}, ${line})"
 
   if [[ "${line}" == *"target="* ]]; then
-    arrLinkWarning[${filename}]+="${line}<br>\n"
-#    echo "[$filename] ${line}"
+    arrLinkWarning[${filename}]+="${line}<br>\r\n "
+#    echo "[$filename] ${line}" 
   fi
 }
 
@@ -28,11 +32,22 @@ function get_title()
 #  echo "get_title(${filename}, ${line})"
 
   if [[ "${line}" == *"<title>"* ]]; then
+    arrKey[${filename}]="true"
     title=${line##<title>}
     title2=${title%%</title>}
-    arrKey+="${filename} "
     arrData[${filename}_title]="${title2}"
     arrData[${filename}_url]="${BLOG_URL}/${filename}"
+  #(ex) <a href="/category/일상정보">
+  elif [[ "${line}" == *"<a href=\"/category/"* ]]; then
+    arrKey[${filename}]="true"
+    category=${line##*<a href=\"/category/}
+    category=${category%%\">*}
+    if [ ${category:0:1} == "%" ]; then
+      category="N/A"
+    fi
+    category="${category//%20/_}"
+    echo "category : ${category}"
+    arrData[${filename}_category]="${category}"
   fi
 }
 
@@ -43,13 +58,15 @@ function print_title_info()
   echo "    <td>No.</td>"
   echo "    <td>URL</td>"
   echo "    <td>Title</td>"
+  echo "    <td>Category</td>"
   echo "  </tr>"
-  for local_filename in ${arrKey[@]}
+  for local_filename in ${!arrKey[@]}
   do
     echo "  <tr>"
     echo "    <td>${local_filename}</td>"
     echo "    <td>${arrData[${local_filename}_url]}</td>"
     echo "    <td>${arrData[${local_filename}_title]}</td>"
+    echo "    <td>${arrData[${local_filename}_category]}</td>"
     echo "  </tr>"
   done
   echo "</table>"
@@ -72,11 +89,11 @@ function check_next()
     fi
   #<a  href='?page=2'>
   elif [[ "$line" == *"<a  href='?page="* ]]; then
-    echo "New type : ${line}"
+#    echo "New type : ${line}"
     line2=${line##*<a  href=\'}
     line3=${line2%%\'*}
-    echo "$line2"
-    echo "$line3"
+#    echo "$line2"
+#    echo "$line3"
     if [ "${line3:0:6}" == "?page=" ]; then
       download_page "${line3}"
     fi
@@ -99,6 +116,7 @@ function download_page()
   fi
 
   echo "Check file : ${filename}"
+  category=""
   while read line  
   do
     if [[ "$filename" =~ ^[0-9]+$ ]]; then
@@ -115,5 +133,5 @@ pushd tmp
 download_page
 popd
 
-print_title_info
-print_link_warning
+print_title_info > ${LIST_PATH}
+print_link_warning > ${LINK_WARNING_PATH}
