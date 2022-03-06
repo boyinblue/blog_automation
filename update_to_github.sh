@@ -1,13 +1,26 @@
 #!/bin/bash
 
-id="boyinblue"
+credential=$(cat ~/.git-credentials)
+
+#get id from credential
+id=${credential##https://}
+id=${id%%:*}
+echo "id : ${id}"
+
+#get token fron credential
+credential=${credential##https://${id}:}
+token=${credential%%@*}
+echo "token : ${token}"
+
 body=$(cat tmp/list.html)
-token="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"
 
 json="{ \"body\" : \"${body}\" }"
 echo ${json} > tmp/list.json
 
 #echo "{ \"body\" : \"${body}\" }" | \
+
+set -x
+
 cat tmp/list.json | \
 curl \
   -u ${id}:${token} \
