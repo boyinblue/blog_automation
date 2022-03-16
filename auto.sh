@@ -2,5 +2,5 @@
 
 git pull
 
-./check_
+./check_target_link.sh
 ./update_to_github.sh

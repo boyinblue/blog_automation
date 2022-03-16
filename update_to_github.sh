@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 credential=$(cat ~/.git-credentials)
 
@@ -12,19 +13,27 @@ credential=${credential##https://${id}:}
 token=${credential%%@*}
 echo "token : ${token}"
 
-body=$(cat tmp/list.html)
+function update_issue
+{
+  input_file=${1}
+  issue_number=${2}
+  output_file=${input_file/.*/.json}
 
-json="{ \"body\" : \"${body}\" }"
-echo ${json} > tmp/list.json
+  body=$(cat ${input_file})
 
-#echo "{ \"body\" : \"${body}\" }" | \
+  json="{ \"body\" : \"${body}\" }"
+  echo ${json} > ${output_file}
 
-set -x
+  #echo "{ \"body\" : \"${body}\" }" | \
 
-cat tmp/list.json | \
-curl \
-  -u ${id}:${token} \
-  -X PATCH \
-  -H "Accept: application/vnd.github.v3+json" \
-  --data-binary @- \
-  https://api.github.com/repos/${id}/blog_automation/issues/1
+  cat ${outout_file} | \
+    curl \
+    -u ${id}:${token} \
+    -X PATCH \
+    -H "Accept: application/vnd.github.v3+json" \
+    --data-binary @- \
+    https://api.github.com/repos/${id}/blog_automation/issues/${issue_number}
+}
+
+update_issue "tmp/list.html" 1
+update_issue "tmp/warning.txt" 2
