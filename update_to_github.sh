@@ -26,7 +26,7 @@ function update_issue
 
   #echo "{ \"body\" : \"${body}\" }" | \
 
-  cat ${outout_file} | \
+  cat ${output_file} | \
     curl \
     -u ${id}:${token} \
     -X PATCH \
@@ -36,4 +36,4 @@ function update_issue
 }
 
 update_issue "tmp/list.html" 1
-update_issue "tmp/warning.txt" 2
+#update_issue "tmp/warning.txt" 2
