@@ -20,6 +20,7 @@ function update_issue
   output_file=${input_file/.*/.json}
 
   body=$(cat ${input_file})
+  body=${body//\"/\\\"}
 
   json="{ \"body\" : \"${body}\" }"
   echo ${json} > ${output_file}
