@@ -100,6 +100,7 @@ def make_html_report():
 
 	f = open(LIST_PATH, 'w')
 	f.write("<table>\n")
+    f.write("<thead>\n")
 	f.write("<tr>\n")
 	f.write("<td>No</td>\n")
 	f.write("<td>Title</td>\n")
@@ -108,7 +109,9 @@ def make_html_report():
 	f.write("<td>Category</td>\n")
 	f.write("<td>URL</td>\n")
 	f.write("</tr>\n")
+	f.write("</thead>\n")
 	p = re.compile('/[0-9]{1,}')
+	f.write("</tbody>\n")
 	for num in urls2:
 		dic = urls["/" + str(num)]
 #		print(dic)
@@ -120,6 +123,7 @@ def make_html_report():
 		f.write("<td>" + dic['category'] + "</td>\n")
 		f.write("<td>" + dic['url'] + "</td>\n")
 		f.write("</tr>\n")
+	f.write("</tbody>\n")
 	f.write("</table>\n")
 	f.close()
 
