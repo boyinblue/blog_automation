@@ -100,7 +100,7 @@ def make_html_report():
 
 	f = open(LIST_PATH, 'w')
 	f.write("<table>\n")
-    f.write("<thead>\n")
+	f.write("<thead>\n")
 	f.write("<tr>\n")
 	f.write("<td>No</td>\n")
 	f.write("<td>Title</td>\n")
