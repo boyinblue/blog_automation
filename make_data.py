@@ -1,10 +1,7 @@
-import sys
-import os
 import pprint
-import requests as req
-import re
 import csv
 import json
+import re
 
 cnt = 0
 urls = {}
@@ -13,6 +10,7 @@ LIST_PATH = "tmp/list.html"
 JSON_PATH = "tmp/list.json"
 
 def make_html_report():
+	cnt = 0
 	p = re.compile('/[0-9]{1,}')
 	for dic in urls:
 		if p.match(dic):
@@ -22,7 +20,7 @@ def make_html_report():
 
 	f = open(LIST_PATH, 'w')
 	f.write("<table>\n")
-	f.write("<thead>\n")
+	f.write("<thead bgcolor=cyan>\n")
 	f.write("<tr>\n")
 	f.write("<td>No</td>\n")
 	f.write("<td>Title</td>\n")
@@ -35,13 +33,19 @@ def make_html_report():
 	p = re.compile('/[0-9]{1,}')
 	f.write("</tbody>\n")
 	for num in urls2:
+		cnt = cnt + 1
+		if cnt % 2:
+			bgcolor=''
+		else:
+			bgcolor=' bgcolor=lavender'
+
 		dic = urls["/" + str(num)]
 #		print(dic)
-		f.write("<tr>\n")
-		f.write("<td>" + str(num) + "</td>\n")
+		f.write("<tr" + bgcolor + ">\n")
+		f.write("<td><b>" + str(num) + "</b></td>\n")
 		f.write("<td>" + dic['title'] + "</td>\n")
 		f.write("</tr>\n")
-		f.write("<tr>\n")
+		f.write("<tr" + bgcolor + ">\n")
 		f.write("<td>" + dic['category'] + "</td>\n")
 		f.write("<td>" + dic['url'] + "</td>\n")
 		f.write("</tr>\n")
