@@ -119,7 +119,7 @@ def main():
 		w = csv.writer(f)
 		for key in urls.keys():
 #			w.writerow(key)
-			w.writerow(urls.values())
+			w.writerow(urls[key].values())
 
 	# Save dictionary with json format
 	with open( JSON_PATH, 'w') as fp:
