@@ -4,6 +4,7 @@ import pprint
 import requests as req
 import re
 import csv
+import json
 from bs4 import BeautifulSoup
 
 blog_url="https://frankler.tistory.com"
