@@ -3,6 +3,8 @@ set -x
 
 credential=$(cat ~/.git-credentials)
 
+output_file="tmp/issue_update.json"
+
 #get id from credential
 id=${credential##https://}
 id=${id%%:*}
@@ -17,7 +19,7 @@ function update_issue
 {
   input_file=${1}
   issue_number=${2}
-  output_file=${input_file/.*/.json}
+#  output_file=${input_file/.*/.json}
 
   body=$(cat ${input_file})
   body=${body//\"/\\\"}

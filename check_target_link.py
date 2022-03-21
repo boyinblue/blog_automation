@@ -3,6 +3,7 @@ import os
 import pprint
 import requests as req
 import re
+import csv
 from bs4 import BeautifulSoup
 
 blog_url="https://frankler.tistory.com"
@@ -12,6 +13,8 @@ cnt = 0
 urls = {}
 urls2 = []
 LIST_PATH = "tmp/list.html"
+JSON_PATH = "tmp/list.json"
+CSV_PATH = "tmp/list.csv"
 
 skip_keyword_contain = \
 { \
@@ -73,7 +76,7 @@ def parce_page(content, parent):
 				full_href=blog_url + href
 			else:
 				full_href=blog_url + "/" + href
-			urls[href] = dict(url=full_href, title=title, category=category, parent=parent)
+			urls[parent] = dict(url=full_href, title=title, category=category, parent=parent)
 #			print("add url into dic : ", href)
 			download_page(href, full_href)
 
@@ -148,6 +151,13 @@ def main():
 	# Print the dictionary with pprint
 	pp = pprint.PrettyPrinter(indent=2)
 	pp.pprint(urls)
+
+    # Save dictionary with csv format
+	with open( CSV_PATH, 'w') as f:
+		w = csv.writer(f)
+		for key in urls.keys():
+#			w.writerow(key)
+			w.writerow(urls.values())
 
 	# Save only pages start with "/Number"
 	# (ex) /1, /101, /301
