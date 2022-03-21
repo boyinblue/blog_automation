@@ -50,7 +50,7 @@ def make_html_report():
 
 def main():
 
-    with open( JSON_PATH, 'r') as json_file:
+	with open( JSON_PATH, 'r') as json_file:
 		urls = json.load(json_file)
 
 	# Print the dictionary with pprint
