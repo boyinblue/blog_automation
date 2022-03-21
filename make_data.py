@@ -4,6 +4,7 @@ import pprint
 import requests as req
 import re
 import csv
+import json
 
 cnt = 0
 urls = {}
