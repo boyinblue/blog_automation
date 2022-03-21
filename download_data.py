@@ -54,19 +54,24 @@ def check_skip_keyword(line):
             return True
     return False
 
-def parce_page(content, parent):
+def parce_page(content, parent, url):
+	print("parce", parent, url)
 	bs = BeautifulSoup(content, 'html.parser')
+
 	title = bs.title.string
+	urls[parent]['title'] = title
+
 	category_tag = bs.find('div', attrs={'class':'category'})
 	if category_tag:
 		category = category_tag.string
 	else:
 		category = ""
+	urls[parent]['category'] = category
+
 	a_tags = bs.findAll('a')
-#	print( title )
 	for tag in a_tags:
 #		print(tag.attrs)
-		if 'parent' in tag.attrs:
+		if 'href' in tag.attrs:
 			href = tag.attrs['href']
 			if check_skip_keyword(href):
 				continue
@@ -77,11 +82,10 @@ def parce_page(content, parent):
 				full_href=blog_url + href
 			else:
 				full_href=blog_url + "/" + href
-			urls[parent] = dict(url=full_href, title=title, category=category, parent=parent)
 #			print("add url into dic : ", href)
-			download_page(href, full_href)
+			download_page(href, full_href, parent)
 
-def download_page(href, url):
+def download_page(href, url, parent):
 	global cnt
 	cnt = cnt + 1
 	print("===================")
@@ -92,7 +96,8 @@ def download_page(href, url):
 #		return
 	file = req.get(url)
 #	print(file.content)
-	parce_page(file.content, href)
+	urls[href] = dict(url=url, title='', category='', parent=parent)
+	parce_page(file.content, href, url)
 
 def main():
 	# Make Directory
@@ -103,14 +108,7 @@ def main():
 	sys.setrecursionlimit(2000)
 
 	# Download first page of my blog(recursive function call)
-	download_page("index.html", blog_url + "/index.html")
-
-#	Test Codes
-#	urls["/84"] = dict(url="https://frankler.tistory.com/84", title="test1", parent="")
-#	urls["/264"] = dict(url="https://frankler.tistory.com/264", title="test2", parent="")
-#	urls["/37"] = dict(url="https://frankler.tistory.com/37", title="test3", parent="")
-#	urls["?page=8"] = dict(url="https://frankler.tistory.com/?page=8", title="test4", parent="")
-#	urls["?page=2"] = dict(url="https://frankler.tistory.com/?page=2", title="test5", parent="")
+	download_page("index.html", blog_url + "/index.html", "/")
 
 	# Print the dictionary with pprint
 	pp = pprint.PrettyPrinter(indent=2)
