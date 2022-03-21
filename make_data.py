@@ -51,6 +51,7 @@ def make_html_report():
 
 def main():
 
+	global urls
 	with open( JSON_PATH, 'r') as json_file:
 		urls = json.load(json_file)
 
