@@ -65,7 +65,7 @@ def parce_page(content, parent):
 #	print( title )
 	for tag in a_tags:
 #		print(tag.attrs)
-		if 'href' in tag.attrs:
+		if 'parent' in tag.attrs:
 			href = tag.attrs['href']
 			if check_skip_keyword(href):
 				continue
@@ -92,43 +92,6 @@ def download_page(href, url):
 	file = req.get(url)
 #	print(file.content)
 	parce_page(file.content, href)
-
-def make_html_report():
-	p = re.compile('/[0-9]{1,}')
-	for dic in urls:
-		if p.match(dic):
-			urls2.append(int(dic[1:]))
-	urls2.sort(reverse=True)
-#	print(urls2)
-
-	f = open(LIST_PATH, 'w')
-	f.write("<table>\n")
-	f.write("<thead>\n")
-	f.write("<tr>\n")
-	f.write("<td>No</td>\n")
-	f.write("<td>Title</td>\n")
-	f.write("</tr>\n")
-	f.write("<tr>\n")
-	f.write("<td>Category</td>\n")
-	f.write("<td>URL</td>\n")
-	f.write("</tr>\n")
-	f.write("</thead>\n")
-	p = re.compile('/[0-9]{1,}')
-	f.write("</tbody>\n")
-	for num in urls2:
-		dic = urls["/" + str(num)]
-#		print(dic)
-		f.write("<tr>\n")
-		f.write("<td>" + str(num) + "</td>\n")
-		f.write("<td>" + dic['title'] + "</td>\n")
-		f.write("</tr>\n")
-		f.write("<tr>\n")
-		f.write("<td>" + dic['category'] + "</td>\n")
-		f.write("<td>" + dic['url'] + "</td>\n")
-		f.write("</tr>\n")
-	f.write("</tbody>\n")
-	f.write("</table>\n")
-	f.close()
 
 def main():
 	# Make Directory
@@ -159,9 +122,9 @@ def main():
 #			w.writerow(key)
 			w.writerow(urls.values())
 
-	# Save only pages start with "/Number"
-	# (ex) /1, /101, /301
-	make_html_report()
+	# Save dictionary with json format
+	with open( JSON_PATH, 'w') as fp:
+		json.dump(urls, fp)
 
 if __name__ == "__main__":
 	main()
