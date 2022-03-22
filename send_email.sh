@@ -57,6 +57,6 @@ if [ "${diff}" == "" ]; then
   echo "No need to send email"
 else
   echo "Need to send email"
-  cat ${TEMP_FILE} | ssmtp -t
+  cat ${TEMP_FILE} | ssmtp -t -v
   cp ${TEMP_FILE} ${PREV_EMAIL_PATH}
 fi
