@@ -2,12 +2,20 @@ import pprint
 import csv
 import json
 import re
+import sys
 
 cnt = 0
 urls = {}
 urls2 = []
 LIST_PATH = "tmp/list.html"
 JSON_PATH = "tmp/list.json"
+
+for i in range( 1, len(sys.argv) ):
+	print("[ARG] " + sys.argv[i])
+	if "-input=" in sys.argv[i]:
+		JSON_PATH = sys.argv[i][7:]
+	elif "-output=" in sys.argv[i]:
+		LIST_PATH = sys.argv[i][8:]
 
 def make_html_report():
 	cnt = 0

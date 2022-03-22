@@ -15,28 +15,51 @@ credential=${credential##https://${id}:}
 token=${credential%%@*}
 echo "token : ${token}"
 
+echo "Parameters : ${@}"
+github_username=${1}
+github_reponame=${2}
+github_issue_id=${3}
+github_body_path=${4}
+
+function print_usage
+{
+  echo "[GitHub] Update Issue"
+  echo "(Usage) ${0} (user name) (repo name) (issue id) (file to update)"
+  echo "(Example) ${0} boyinblue blog_automation 1 tmp/list.html"
+}
+
+if [ "${github_username}" == "" ]; then
+  echo "[Error] username is empty."
+  print_usage
+  exit 1
+elif [ "${github_reponame}" == "" ]; then
+  echo "[Error] reponame is empty."
+  print_usage
+  exit 2
+elif [ "${github_issue_id}" == "" ]; then
+  echo "[Error] issue id is empty."
+  print_usage
+  exit 3
+elif [ "${github_body_path}" == "" ]; then
+  echo "[Error] content to update is empty."
+  print_usage
+  exit 4
+fi
+
 function update_issue
 {
-  input_file=${1}
-  issue_number=${2}
-#  output_file=${input_file/.*/.json}
-
-  body=$(cat ${input_file})
+  body=$(cat ${github_body_path})
   body=${body//\"/\\\"}
 
   json="{ \"body\" : \"${body}\" }"
-  echo ${json} > ${output_file}
 
-  #echo "{ \"body\" : \"${body}\" }" | \
-
-  cat ${output_file} | \
+  echo ${json} | \
     curl \
     -u ${id}:${token} \
     -X PATCH \
     -H "Accept: application/vnd.github.v3+json" \
     --data-binary @- \
-    https://api.github.com/repos/${id}/blog_automation/issues/${issue_number}
+    https://api.github.com/repos/${github_username}/${github_reponame}/issues/${github_issue_id}
 }
 
-update_issue "tmp/list.html" 1
-#update_issue "tmp/warning.txt" 2
+update_issue

@@ -1,14 +1,54 @@
 #!/bin/bash
+set -e -x
 
-PREV_EMAIL_MSG=tmp/email_prev.txt
-EMAIL_MSG=tmp/email.txt
-EMAIL_MSG_HEADER=email_header.txt
+TEMP_FILE=$(tempfile)
 
-cp ${EMAIL_MSG_HEADER} ${EMAIL_MSG}
-cat tmp/list.html >> ${EMAIL_MSG}
+function print_usage()
+{
+  set +x
+  echo "Send e-mail"
+  echo "(Usage) ${0} -body=(content file path) -header=(email_header) -email=(whole email path)"
+  echo "(Example) ${0} -body=tmp/list.html -header=tmp/email_header.txt -email=tmp/email.txt"
+}
 
-if [ -e ${PREV_EMAIL_MSG} ]; then
-  diff=$(diff $PREV_EMAIL_MSG $EMAIL_MSG)
+for i in "$@"
+do
+  case $i in
+    -body=*)
+	  BODY_PATH=${i##*=}
+	  shift
+	  ;;
+	-header=*)
+	  EMAIL_MSG_HEADER=${i##*=}
+	  shift
+	  ;;
+	-email=*)
+	  PREV_EMAIL_PATH=${i##*=}
+	  shift
+	  ;;
+	*)
+	  print_usage
+	  exit
+	  shift
+	  ;;
+  esac
+done
+
+if [ "${BODY_PATH}" == "" ]; then
+  echo "There is no e-mail body path"
+  print_usage
+  exit 1
+elif [ "${EMAIL_MSG_HEADER}" == "" ]; then
+  echo "There is no e-mail header path"
+  print_usage
+  exit 2
+fi
+
+cp ${EMAIL_MSG_HEADER} ${TEMP_FILE}
+cat ${BODY_PATH} >> ${TEMP_FILE}
+
+if [ -e ${PREV_EMAIL_PATH} ]; then
+  diff=$(diff $PREV_EMAIL_PATH $TEMP_FILE)
 else
   diff="First Send"
 fi
@@ -17,6 +57,6 @@ if [ "${diff}" == "" ]; then
   echo "No need to send email"
 else
   echo "Need to send email"
-  cat ${EMAIL_MSG} | ssmtp -t -v
-  cp ${EMAIL_MSG} ${PREV_EMAIL_MSG}
+  cat ${TEMP_FILE} | ssmtp -t
+  cp ${TEMP_FILE} ${PREV_EMAIL_PATH}
 fi

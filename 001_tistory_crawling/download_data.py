@@ -13,9 +13,15 @@ blog_url="https://frankler.tistory.com"
 cnt = 0
 urls = {}
 urls2 = []
-LIST_PATH = "tmp/list.html"
 JSON_PATH = "tmp/list.json"
 CSV_PATH = "tmp/list.csv"
+
+for i in range( 1, len(sys.argv) ):
+    print("[ARG] " + sys.argv[i])
+    if "-json=" in sys.argv[i]:
+        JSON_PATH = sys.argv[i][6:]
+    elif "-csv=" in sys.argv[i]:
+        CSV_PATH = sys.argv[i][5:]
 
 skip_keyword_contain = \
 { \
