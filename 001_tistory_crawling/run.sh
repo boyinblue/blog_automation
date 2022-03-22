@@ -26,5 +26,5 @@ pushd ..
 ############################
 # Step 4. Send e-mail
 ############################
-./send_email.sh -body=${current_dir}/tmp/list.html -header=email_header.txt -email=${current_dir}/tmp/email.txt
+./send_email.sh -body=${current_dir}/tmp/list.html -header=${current_dir}/email_header.txt -email=${current_dir}/tmp/email.txt
 popd
