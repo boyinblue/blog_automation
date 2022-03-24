@@ -2,7 +2,8 @@
 set -e
 
 # 필요한 파일들
-MARKET_CODE_FILE="market_code.json"
+TMP_DIR=tmp
+MARKET_CODE_FILE="tmp/market_code.json"
 TARGET_DIR='target_dir'
 
 # 환경 변수
@@ -10,6 +11,9 @@ TARGET_DIR_DEFAULT='../../boyinblue.github.io/009_upbit'
 
 # GitHub로부터 최신 코드를 수신함
 git pull
+
+# 임시 디렉토리
+mkdir -p $TMP_DIR
 
 # 자동화의 결과가 저장될 디렉토리 (synbolic link)
 if [ ! -d $TARGET_DIR ]; then
@@ -24,7 +28,7 @@ if [ ! -d $TARGET_DIR ]; then
 fi
 
 # market.json 파일이 없으면 새로 받아온다.
-if [ ! -e 'market_code.json' ]; then
+if [ ! -e $MARKET_CODE_FILE ]; then
   python3 000_upbit_get_market_code.py
 fi
 
@@ -32,6 +36,8 @@ fi
 python3 002_upbit_get_daily_candle.py
 
 # GitHub에 자동으로 업데이트 한다.
+pushd ${TARGET_DIR}
 git add ..
 git commit -m "[UPBit] auto generated site map & main page"
 git push origin main
+popd

@@ -61,7 +61,7 @@ def load_data_from_upbit():
     candle_date_time_utc=list(map(select_date_time_utc, st_python))
 
     date = candle_date_time_utc[0]
-    title = "업비트 일간 캔들 조회(" + date + ")"
+    title = "가상화폐 일간 통계 (" + date + ")"
     description = title
 #    filename = "/" + date[:10] + "-daily-candle-10days"
     filename = "{}/{}-daily-candle-10days".format( TARGET_DIR, date[:10] )
