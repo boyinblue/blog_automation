@@ -13,7 +13,18 @@ TARGET_DIR_DEFAULT='../../boyinblue.github.io/009_upbit'
 git pull
 
 # 임시 디렉토리
-mkdir -p $TMP_DIR
+date_utc=$(date -u '+%Y-%m-%d')
+date_today=$(date '+%Y-%m-%d')
+if [ "${date_utc:10}" == "${date_today:10}" ]; then
+  # 오전 9시가 넘으면 UTC 날짜와 동일하므로, 어제 날짜로 디렉토리 생성
+  yesterday=$(date -d "yesterday" '+%Y-%m-%d')
+else
+  # 오전 9시 이전이면 UTC 날짜가 어제 날짜이므로 디렉토리 생성
+  yesterday=$date_utc
+fi
+#echo "mkdir -p $TMP_DIR/${yesterday}"
+mkdir -p $TMP_DIR/${yesterday}
+mkdir -p ${TARGET_DIR}/${yesterday}
 
 # 자동화의 결과가 저장될 디렉토리 (synbolic link)
 if [ ! -d $TARGET_DIR ]; then
@@ -34,6 +45,7 @@ fi
 
 # 일간 캔들을 가져온다.
 python3 002_upbit_get_daily_candle.py
+python3 003_make_report_per_market.py -date=${yesterday}
 
 # GitHub에 자동으로 업데이트 한다.
 pushd ${TARGET_DIR}

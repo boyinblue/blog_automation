@@ -3,7 +3,7 @@ import json
 
 # 목적 : 업비트의 마켓 코트를 가져옴
 # 저장 : market_code.json 파일로 저장됨
-output_file = "market_code.json"
+output_file = "tmp/market_code.json"
 
 # Query
 url = "https://api.upbit.com/v1/market/all"
