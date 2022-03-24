@@ -1,6 +1,17 @@
+# Upbit API를 사용하기 위한 패키지
 import requests
+
+# Query로 수신한 json을 다루기 위한 패키지
 import json
+
+# 결과 데이터를 그래프로 그려주기 위함
 import matplotlib.pyplot as plt
+
+# 파일의 존재 여부를 확인하기 위함
+import os
+
+
+TARGET_DIR = 'target_dir'
 
 days = list(range(10))
 opening_price=[]
@@ -86,6 +97,9 @@ def write_table():
                 low_price[i],
                 high_price[i],
                 trade_price[i]))
+
+if False == os.path.isfile( TARGET_DIR ):
+    print("There is no target directory")
 
 load_data_from_upbit()
 draw_graph()
