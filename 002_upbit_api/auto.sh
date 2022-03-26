@@ -12,16 +12,15 @@ TARGET_DIR_DEFAULT='../../boyinblue.github.io/009_upbit'
 # GitHub로부터 최신 코드를 수신함
 git pull
 
-# 임시 디렉토리
-date_utc=$(date -u '+%Y-%m-%d')
-date_today=$(date '+%Y-%m-%d')
-if [ "${date_utc:10}" == "${date_today:10}" ]; then
-  # 오전 9시가 넘으면 UTC 날짜와 동일하므로, 어제 날짜로 디렉토리 생성
-  yesterday=$(date -d "yesterday" '+%Y-%m-%d')
+if [ "${1:0:6}" == "-date=" ]; then
+  date="${1:6}T23:59:59"
 else
-  # 오전 9시 이전이면 UTC 날짜가 어제 날짜이므로 디렉토리 생성
-  yesterday=$date_utc
+  # 임시 디렉토리
+  date=$(date -u '+%Y-%m-%dT%H:%m:%d')
 fi
+
+yesterday=$(date "--date=$date -d -1day" "+%Y-%m-%d")
+
 #echo "mkdir -p $TMP_DIR/${yesterday}"
 mkdir -p $TMP_DIR/${yesterday}
 mkdir -p ${TARGET_DIR}/${yesterday}
@@ -44,11 +43,12 @@ if [ ! -e $MARKET_CODE_FILE ]; then
 fi
 
 # 일간 캔들을 가져온다.
-python3 002_upbit_get_daily_candle.py
+python3 002_upbit_get_daily_candle.py -date=${yesterday}
 python3 003_make_report_per_market.py -date=${yesterday}
 
 # GitHub에 자동으로 업데이트 한다.
 pushd ${TARGET_DIR}
+git pull
 git add ..
 git commit -m "[UPBit] auto generated site map & main page"
 git push origin main

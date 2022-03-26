@@ -41,8 +41,8 @@ def draw_graph():
 
 #    plt.show()
 
-def write_table(json_data, detail_json_data):
-    with open(filename + ".md", 'w') as f:
+def write_table(filepath, json_data, detail_json_data):
+    with open(filepath + ".md", 'w') as f:
         f.write("---\n")
         f.write("title: {}\n".format(json_data['title']))
         f.write("description: {}\n".format(json_data['description']))
@@ -51,15 +51,28 @@ def write_table(json_data, detail_json_data):
         f.write("{}\n".format(json_data['title']))
         f.write("===\n")
         f.write("\n")
+        f.write("|항목|내용|\n")
+        f.write("|--|--|\n")
+        f.write("|종목|{}|\n".format(json_data['korean_name']))
+        f.write("|마켓|{}|\n".format(json_data['market']))
+        days = json_data['days']
+        f.write("|종류|일 단위 캔들 ({}일간)|\n".format(days))
+        date_from = detail_json_data[days-1]['candle_date_time_kst'][:13]
+        date_from.replace("T", " ")
+        date_to = detail_json_data[0]['candle_date_time_kst'][:13]
+        date_to.replace("T", " ")
+        f.write("|기간|{} - {}\n|".format(date_from, date_to))
+        f.write("\n")
+        f.write("\n")
         f.write("|날짜|시가|저가|고가|종가|비고|\n")
         f.write("|--|--|--|--|--|--|\n")
         for candle_json_data in detail_json_data:
             f.write("|{}|{}|{}|{}|{}|    |\n".format(
                 candle_json_data['candle_date_time_kst'][:10],
-                candle_json_data['opening_price'] / 1000,
-                candle_json_data['low_price'] / 1000,
-                candle_json_data['high_price'] / 1000,
-                candle_json_data['trade_price'] / 1000 ) )
+                candle_json_data['opening_price'],
+                candle_json_data['low_price'],
+                candle_json_data['high_price'],
+                candle_json_data['trade_price'] ) )
 
 def write_readme(date, json_data):
     readme_filename = "{}/{}/README.md".format(TARGET_DIR, date)
@@ -118,7 +131,11 @@ with open("tmp/market_code.json", 'r') as json_file:
         title = "가상화폐 일간 통계 ({}, {})".format( market_name, date)
         description = title
 #       filename = "/" + date[:10] + "-daily-candle-10days"
-        filename = "{}/{}/{}-daily-candle-10days.html".format( TARGET_DIR, date[:10],market_code )
+        filename = "{}-daily-candle-10days.html".format(market_code)
+        filepath = "{}/{}/{}-daily-candle-10days".format(
+                        TARGET_DIR,
+                        date,
+                        market_code)
 
         market_json_data['title'] = title
         market_json_data['description'] = description
@@ -126,9 +143,10 @@ with open("tmp/market_code.json", 'r') as json_file:
 
         with open("tmp/{}/daily_candle_{}.json".format(date, market_json_data['market']), 'r') as fp:
             detail_json_data = json.load(fp)
+            market_json_data['days'] = len(detail_json_data)
             for key in detail_json_data[0].keys():
                 market_json_data[key] = detail_json_data[0][key]
-            write_table(market_json_data, detail_json_data)
+            write_table(filepath, market_json_data, detail_json_data)
 #            print(market_json_data)
         sorted_json_data.append( market_json_data )
 
