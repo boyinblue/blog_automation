@@ -60,7 +60,7 @@ def write_table(filepath, json_data, detail_json_data):
         f.write("|종목|{}|\n".format(json_data['korean_name']))
         f.write("|마켓|{}|\n".format(json_data['market']))
 
-        scale = json_data['market'].split()[0]
+        scale = json_data['market'].split('-')[0]
         f.write("|단위|{}|\n".format(scale))
 
         days = json_data['days']
@@ -90,8 +90,10 @@ def write_table(filepath, json_data, detail_json_data):
 
         f.write("\n")
         f.write("\n")
-        f.write("일간 캔들 구간\n")
+        f.write("일간 캔들 구간에 대한 설명\n")
         f.write("---\n")
+        f.write("\n")
+        f.write("\n")
         f.write("업비트의 일간 캔들은 세계 협정시(UTC) 기준입니다. \n")
         f.write("UTC 기준 0시 0분 0초부터 23시 59분 59초까지입니다. \n")
         f.write("한국 시간인 KST 기준으로는 전일 오전 9시부터 다음날 오전 8시 59분까지입니다. \n")
