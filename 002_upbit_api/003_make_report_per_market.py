@@ -52,6 +52,7 @@ def write_table(filepath, json_data, detail_json_data):
         f.write("description: {}\n".format(json_data['description']))
         f.write("---\n")
         f.write("\n")
+        f.write("\n")
         f.write("{}\n".format(json_data['title']))
         f.write("===\n")
         f.write("\n")
