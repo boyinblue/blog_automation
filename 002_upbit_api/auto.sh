@@ -7,7 +7,8 @@ MARKET_CODE_FILE="tmp/market_code.json"
 TARGET_DIR='target_dir'
 
 # 환경 변수
-TARGET_DIR_DEFAULT='../../boyinblue.github.io/009_upbit'
+#TARGET_DIR_DEFAULT='../../boyinblue.github.io/009_upbit'
+TARGET_DIR_DEFAULT='../../esregnet.github.io/001_upbit'
 
 # GitHub로부터 최신 코드를 수신함
 git pull
