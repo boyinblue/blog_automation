@@ -24,9 +24,8 @@ yesterday=$(date "--date=$date -d -1day" "+%Y-%m-%d")
 
 #echo "mkdir -p $TMP_DIR/${yesterday}"
 mkdir -p $TMP_DIR/${yesterday}
-mkdir -p ${TARGET_DIR}/${yesterday}
 
-# 자동화의 결과가 저장될 디렉토리 (synbolic link)
+# 자동화의 결과가 저장될 디렉토리 (symbolic link)
 if [ ! -d $TARGET_DIR ]; then
   echo "There is no symbolic link"
   if [ -d $TARGET_DIR_DEFAULT ]; then
@@ -37,6 +36,8 @@ if [ ! -d $TARGET_DIR ]; then
     echo "Because there is no path : $TARGET_DIR_DEFAULT"
   fi
 fi
+
+mkdir -p ${TARGET_DIR}/${yesterday}
 
 # market.json 파일이 없으면 새로 받아온다.
 if [ ! -e $MARKET_CODE_FILE ]; then
