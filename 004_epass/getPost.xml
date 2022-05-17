@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<methodCall>
+  <methodName>wp.getPost</methodName>
+  <params>
+    <param>
+      <value><string>esregnet0409@gmail.com</string></value>
+    </param>
+    <param>
+      <value><string>honor0904</string></value>
+    </param>
+    <param>
+      <value><int>0</int></value>
+    </param>
+  </params>
+</methodCall>
