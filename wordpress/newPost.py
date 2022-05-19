@@ -3,7 +3,7 @@
 from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.methods import posts
 
-def write_post(url, id, pw, title, slug, content):
+def newPost(url, id, pw, title, slug, content):
   print("id :", id)
   print("pw :", pw)
   url = url + "/xmlrpc.php"
@@ -22,7 +22,7 @@ def write_post(url, id, pw, title, slug, content):
   client.call(posts.NewPost(post))
 
 if __name__ == '__main__':
-  write_post( "https://www.dhqhrtnwl.shop",
+  newPost( "https://www.dhqhrtnwl.shop",
                   'esregnet0409@gmail.com',
                   'honor0904',
                   "자동 글쓰기",
