@@ -13,16 +13,13 @@ def getPost(url, id, pw, post_id):
 
   client = Client(url, id, pw)
 
-  post = posts.GetPost(WordPressPost())
-  post.id = post_id
-  post = client.call(post)
+  post = client.call(posts.GetPost(post_id))
 
-  print("id :", post.id)
-  print("user :", post.user)
-  print("date :", post.date)
-  print("title :", post.title)
-  print("slug :", post.slug)
-  print("content :", post.content)
+#  print("id :", post.id)
+#  print("user :", post.user)
+#  print("date :", post.date)
+#  print("title :", post.title)
+#  print("slug :", post.slug)
 
 if __name__ == '__main__':
   getPost( "https://www.dhqhrtnwl.shop",

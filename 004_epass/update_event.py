@@ -14,7 +14,7 @@ arrPost = []
 
 def load_posts():
   global auths
-  global posts
+  global arrPost
 
   # Get Credentials
   auths = GetCredential.GetCredential("dhqhrtnwl")
@@ -31,8 +31,14 @@ def check_exist(goods, period, url):
   print("경품 :", goods)
   print("기간 :", period)
   print("URL :", url)
+  print("len(arrPost) :", len(arrPost))
   for post in arrPost:
-    pass
+    print("Check ", post.title)
+    if url in post.content:
+      print("{}에 포함".format(post.title))
+      return True
+
+  print("발견 못함")
 
 def search_event_data(dir):
   print("search event data at ({})".format(dir))
