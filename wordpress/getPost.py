@@ -4,20 +4,25 @@ import os
 from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.methods import posts
 
-def getPost(url, id, pw):
-  print("id :", id)
-  print("pw :", pw)
+def getPost(url, id, pw, post_id):
   url = url + "/xmlrpc.php"
-  print("url :", url)
+#  print("id :", id)
+#  print("pw :", pw)
+#  print("url :", url)
+#  print("post id :", post_id)
+
   client = Client(url, id, pw)
 
-  post = WordPressPost()
-  post.post_id = 6
-  post = client.call(posts.GetPost(post))
+  post = posts.GetPost(WordPressPost())
+  post.id = post_id
+  post = client.call(post)
 
   print("id :", post.id)
   print("user :", post.user)
   print("date :", post.date)
+  print("title :", post.title)
+  print("slug :", post.slug)
+  print("content :", post.content)
 
 if __name__ == '__main__':
   getPost( "https://www.dhqhrtnwl.shop",
