@@ -46,8 +46,8 @@ function get_sub_list()
   goods=${goods%%\" />*}
 
   echo ${prime}
-  echo "응모기간 : ${period}" | tee ${1}.txt
-  echo "경품 : ${goods}" | tee -a ${1}.txt
+  echo "응모기간 : ${period}" | tee tmp/${1}.txt
+  echo "경품 : ${goods}" | tee -a tmp/${1}.txt
 
   curl -s -d "InNo=${1}&EnType=B" \
           -H "Content-Type: application/x-www-form-urlencoded" \
@@ -57,7 +57,7 @@ function get_sub_list()
   link=$(cat tmp/${1}.html | grep location.href)
   link=${link##location.href=}
   link=${link%%;*}
-  echo "링크 : $link" | tee -a ${1}.txt
+  echo "링크 : $link" | tee -a tmp/${1}.txt
 }
 
 mkdir -p tmp

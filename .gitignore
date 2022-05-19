@@ -1,6 +1,11 @@
+.dhqhrtnwl
+.mesti
 001_tistory_crawling/tmp
 002_upbit_api/tmp
 002_upbit_api/target_dir
 003_oil_price/tmp
 003_oil_price/token.txt
 004_epass/js
+004_epass/tmp
+# Byte-compiled / optimized / DLL files
+wordpress/__pycache__/
