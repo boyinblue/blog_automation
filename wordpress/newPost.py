@@ -1,13 +1,15 @@
 #!/usr/bin/python3
 
-from wordpress_xmlrpc import Client, WordPressPost
-from wordpress_xmlrpc.methods import posts
 
 def newPost(url, id, pw, title, slug, content):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
 #  print("pw :", pw)
 #  print("url :", url)
+
+  from wordpress_xmlrpc import Client, WordPressPost
+  from wordpress_xmlrpc.methods import posts
+
   client = Client(url, id, pw)
 
   post = WordPressPost()

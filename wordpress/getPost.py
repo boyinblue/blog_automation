@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-from wordpress_xmlrpc import Client
-from wordpress_xmlrpc.methods import posts
-
 def getPost(url, id, pw, post_id):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
@@ -10,10 +7,12 @@ def getPost(url, id, pw, post_id):
 #  print("url :", url)
 #  print("post id :", post_id)
 
+  from wordpress_xmlrpc import Client
+  from wordpress_xmlrpc.methods import posts
+
   client = Client(url, id, pw)
 
   post = client.call(posts.GetPost(post_id))
-
 
   return post
 

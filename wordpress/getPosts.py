@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from wordpress_xmlrpc import Client
-from wordpress_xmlrpc.methods import posts
+def getPosts(a, b, c):
+  print(a, b, c)
 
 def getPosts(url, id, pw):
   url = url + "/xmlrpc.php"
@@ -9,14 +9,22 @@ def getPosts(url, id, pw):
 #  print("pw :", pw)
 #  print("url :", url)
 
+  from wordpress_xmlrpc import Client
+  from wordpress_xmlrpc.methods import posts
+
   client = Client(url, id, pw)
 
   ids = []
+  offset = 0
+  increment = 20
 
-  postList = client.call(posts.GetPosts())
-  for post in postList:
-#    print("ID :", post.id)
-    ids.append(post.id)
+  while True:
+    postList = client.call(posts.GetPosts({'number':increment,'offset':offset}))
+    if len(postList) == 0:
+      break
+    for post in postList:
+      ids.append(post.id)
+    offset = offset + increment
 
   return ids
 

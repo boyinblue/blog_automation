@@ -7,5 +7,6 @@
 003_oil_price/token.txt
 004_epass/js
 004_epass/tmp
+004_epass/__pycache__/
 # Byte-compiled / optimized / DLL files
 wordpress/__pycache__/
