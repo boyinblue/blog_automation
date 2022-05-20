@@ -21,6 +21,8 @@ def getPost(url, id, pw, post_id):
 #  print("title :", post.title)
 #  print("slug :", post.slug)
 
+  return post
+
 if __name__ == '__main__':
   getPost( "https://www.dhqhrtnwl.shop",
                   'esregnet0409@gmail.com',
