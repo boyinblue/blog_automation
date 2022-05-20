@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-import os
 
-from wordpress_xmlrpc import Client, WordPressPost
+from wordpress_xmlrpc import Client
 from wordpress_xmlrpc.methods import posts
 
 def getPost(url, id, pw, post_id):
@@ -15,15 +14,24 @@ def getPost(url, id, pw, post_id):
 
   post = client.call(posts.GetPost(post_id))
 
-#  print("id :", post.id)
-#  print("user :", post.user)
-#  print("date :", post.date)
-#  print("title :", post.title)
-#  print("slug :", post.slug)
 
   return post
 
 if __name__ == '__main__':
-  getPost( "https://www.dhqhrtnwl.shop",
-                  'esregnet0409@gmail.com',
-                  'honor0904')
+  from GetCredential import GetCredential
+  auths = GetCredential('dhqhrtnwl')
+
+  import sys
+  if len(sys.argv) <= 1:
+    print("Please input specific post id")
+    exit(0)
+
+  for i in range(1, len(sys.argv)):
+    print("Get Post", sys.argv[i])
+    post = getPost(auths[0], auths[1], auths[2], sys.argv[i])
+
+    print("id :", post.id)
+    print("user :", post.user)
+    print("date :", post.date)
+    print("title :", post.title)
+    print("slug :", post.slug)

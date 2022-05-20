@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
-from GetCredential import GetCredential
-
-from wordpress_xmlrpc import Client, WordPressPost
+from wordpress_xmlrpc import Client
 from wordpress_xmlrpc.methods import posts
 
 def getPosts(url, id, pw):
@@ -23,6 +21,9 @@ def getPosts(url, id, pw):
   return ids
 
 if __name__ == '__main__':
+  from GetCredential import GetCredential
+
 #  auths = GetCredential('mesti')
   auths = GetCredential('dhqhrtnwl')
-  getPosts(auths[0], auths[1], auths[2])
+  ids = getPosts(auths[0], auths[1], auths[2])
+  print("Posts :", ids)
