@@ -1,27 +1,18 @@
 #!/usr/bin/python3
 
 
-def newPost(url, id, pw, title, slug, content, category=None):
+def editPost(url, id, pw, post_id, post):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
 #  print("pw :", pw)
 #  print("url :", url)
 
-  from wordpress_xmlrpc import Client, WordPressPost
+  from wordpress_xmlrpc import Client
   from wordpress_xmlrpc.methods import posts
 
   client = Client(url, id, pw)
 
-  post = WordPressPost()
-  post.title = title
-  post.slug = slug
-  post.content = content
-  if category:
-#    print("terms :", post.terms)
-    post.terms.append(category)
-
-  post.post_status = 'publish'
-  client.call(posts.NewPost(post))
+  client.call(posts.EditPost(post_id, post))
 
 if __name__ == '__main__':
   from GetCredential import GetCredential

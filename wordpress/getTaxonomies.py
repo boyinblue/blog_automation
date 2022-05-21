@@ -14,11 +14,17 @@ def getTerms(url, id, pw, taxoName):
   return termList
 
 def getCateIdByName(url, id, pw, cateName):
+  term = getTermByName(url, id, pw, cateName)
+  if term:
+    return term.id
+  return None
+
+def getTermByName(url, id, pw, cateName):
   client = Client(url + "/xmlrpc.php", id, pw)
   termList = client.call(taxonomies.GetTerms('category'))
   for term in termList:
     if cateName == term.name:
-      return term.id
+      return term
   return None
     
 if __name__ == '__main__':
