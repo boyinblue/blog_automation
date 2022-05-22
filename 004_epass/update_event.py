@@ -32,6 +32,9 @@ def load_posts():
     if checkEventCategory(post):
       arrPost.append(post)
 
+def upload_thumb(goods, period, url):
+  
+
 def write_post(goods, period, url, category):
   title = "[이벤트 정보] {} ({})".format(goods, period)
   slug = "이벤트정보-{}".format(goods)
