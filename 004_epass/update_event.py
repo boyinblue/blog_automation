@@ -28,6 +28,7 @@ def load_posts():
   global arrPost
 
   # Get Posts
+  print("모든 포스트를 불러오는 중입니다...")
   ids = getPosts.getPosts(auths[0], auths[1], auths[2])
   for id in ids:
     post = getPost.getPost(auths[0], auths[1], auths[2], id)
@@ -51,6 +52,8 @@ def upload_file(tmp_fname, fname):
     with SCPClient(ssh_client.get_transport()) as scp:
       scp.put(tmp_fname, remote_path, preserve_times=True)
   except SCPException:
+    print("SCP 업로드에 실패하였습니다.")
+    print("Remote Path :", remote_path)
     url = ''
 
   ssh_client.close()
@@ -117,6 +120,7 @@ def search_event_data(dir):
   for filename in filenames:
 #    print("filename :", filename)
     if filename[-4:].lower() == ".txt":
+      print("")
       print("load event data :", filename)
       load_event_data("{}/{}".format(dir,filename))
 
