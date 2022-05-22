@@ -11,7 +11,9 @@ import getPost
 import newPost
 import getTaxonomies
 
+host = None
 auths = None
+path = None
 arrPost = []
 targetCate = "이벤트 정보"
 targetTerm = None
@@ -36,7 +38,7 @@ def upload_file(tmp_fname, fname):
   import paramiko
   from scp import SCPClient, SCPException
 
-  ssh = GetCredential.GetSsh('dhqhrtnwl')
+  ssh = GetCredential.GetSsh(host)
 
   ssh_client = paramiko.SSHClient()
   ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -66,7 +68,7 @@ def upload_thumb(goods, period, url):
 
   return upload_file(tmp_fname, fname)
 
-def write_post(post_id, goods, period, url, category, post):
+def write_post(post_id, goods, period, url, category, post=None):
   img_url = upload_thumb(goods, period, url)
   title = "[이벤트 정보] {} ({})".format(goods, period)
   slug = "이벤트정보-{}".format(goods)
@@ -93,8 +95,6 @@ def write_post(post_id, goods, period, url, category, post):
 
 def check_exist(goods, period, url):
   post_id = 0
-  if len(arrPost) == 0:
-    load_posts()
   print("경품 :", goods)
   print("기간 :", period)
   print("URL :", url)
@@ -106,9 +106,10 @@ def check_exist(goods, period, url):
 
   if post_id == 0:
     print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
+    write_post(post_id, goods, period, url, targetCate)
   else:
     print("[AUTO] Edit Post : {} / {} / {}".format(goods, period, url))
-  write_post(post_id, goods, period, url, targetCate, post)
+    write_post(post_id, goods, period, url, targetCate, post=post)
 
 def search_event_data(dir):
   print("search event data at ({})".format(dir))
@@ -134,28 +135,39 @@ def load_event_data(filename):
   check_exist(event_goods, event_period, event_url)
 
 def main():
-  # Get Credentials
+  import sys
+  for i in range(1, len(sys.argv)):
+    if '-host=' in sys.argv[i]:
+      global host
+      host = sys.argv[i][6:]
+    elif '-dir=' in sys.argv[i]:
+      global path
+      path = sys.argv[i][5:]
+
+  if not host:
+    print("Please set host")
+    print("{} -host=hostname".format(sys.argv[0]))
+    exit(2)
+
   global auths
-  auths = GetCredential.GetCredential("dhqhrtnwl")
+  auths = GetCredential.GetCredential(host)
 
   # Get Term
   global targetTerm
   targetTerm = getTaxonomies.getTermByName(
                   auths[0], auths[1], auths[2], targetCate)
 
-  if len(sys.argv) > 3:
-    event_goods = sys.argv[1]
-    event_period = sys.argv[2]
-    event_url = sys.argv[3]
-    check_exist(event_goods, event_period, event_url)
-  elif len(sys.argv) > 1:
-    path = sys.argv[1]
-    if not os.path.isdir(path):
-      print("Cannot find file :", path)
-      exit(0)
-    search_event_data(path)
-  else:
-    print("There is no parameter")
+  # Load Posts
+  load_posts()
+
+  if not path:
+    print("Please set directory")
+    print("{} -dir=tmp".format(sys.argv[0]))
+    exit(3)
+  elif not os.path.isdir(path):
+    print("Cannot find dir :", path)
+    exit(4)
+  search_event_data(path)
 
 if __name__ == '__main__':
   main()
