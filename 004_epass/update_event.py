@@ -32,22 +32,67 @@ def load_posts():
     if checkEventCategory(post):
       arrPost.append(post)
 
-def upload_thumb(goods, period, url):
-  
+def upload_file(tmp_fname, fname):
+  import paramiko
+  from scp import SCPClient, SCPException
 
-def write_post(goods, period, url, category):
+  ssh = GetCredential.GetSsh('dhqhrtnwl')
+
+  ssh_client = paramiko.SSHClient()
+  ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+  ssh_client.connect(ssh[0], username=ssh[1], password=ssh[2])
+
+  remote_path = "/var/www/wordpress/wp-content/custom/event_info"
+  url = "/wp-content/custom/event_info/{}".format(fname)
+
+  try:
+    with SCPClient(ssh_client.get_transport()) as scp:
+      scp.put(tmp_fname, remote_path, preserve_times=True)
+  except SCPException:
+    url = ''
+
+  ssh_client.close()
+
+  return url
+
+def upload_thumb(goods, period, url):
+  import make_event_thumb
+
+  fname = ''.join(filter(str.isalnum, url)) 
+  fname = "{}.jpg".format(fname)
+  tmp_fname = "tmp/{}".format(fname)
+  print("Generate Thumb :", tmp_fname)
+  make_event_thumb.draw_image(goods, period, tmp_fname)
+
+  return upload_file(tmp_fname, fname)
+
+def write_post(post_id, goods, period, url, category, post):
+  img_url = upload_thumb(goods, period, url)
   title = "[이벤트 정보] {} ({})".format(goods, period)
   slug = "이벤트정보-{}".format(goods)
+  if img_url == '':
+    img_tag = ""
+  else:
+    img_tag = "<img src={}><br>\n".format(img_url)
   link = '<p data-ke-size="size16"><a style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>이벤트 바로가기</a></p>'.format(url)
-  content = "<h2>이벤트 정보</h2>\n\
-                  상품 : {}<br>\n\
-                  이벤트 기간 : {}<br>\n\
-                  {}\n".format(
-                                  goods, period, link)
-  newPost.newPost( auths[0], auths[1], auths[2],
+  content = "{}\n\
+             <h2>이벤트 정보</h2>\n\
+             상품 : {}<br>\n\
+             이벤트 기간 : {}<br>\n\
+             {}\n".format(
+                             img_tag, goods, period, link)
+  if post_id == 0:
+    newPost.newPost( auths[0], auths[1], auths[2],
         title, slug, content, targetTerm)
+  elif not post:
+    raise
+  else:
+    import editPost
+    post.content = content
+    editPost.editPost( auths[0], auths[1], auths[2], post_id, post)
 
 def check_exist(goods, period, url):
+  post_id = 0
   if len(arrPost) == 0:
     load_posts()
   print("경품 :", goods)
@@ -56,12 +101,14 @@ def check_exist(goods, period, url):
   for post in arrPost:
     if url.strip('\'') in post.content:
       print("{}에 포함".format(post.title))
-      return True
-#    else:
-#      print("{} 못찾음 {}".format(url.strip('\''), post.content))
+      post_id = post.id
+      break
 
-  print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
-  write_post(goods, period, url, targetCate)
+  if post_id == 0:
+    print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
+  else:
+    print("[AUTO] Edit Post : {} / {} / {}".format(goods, period, url))
+  write_post(post_id, goods, period, url, targetCate, post)
 
 def search_event_data(dir):
   print("search event data at ({})".format(dir))

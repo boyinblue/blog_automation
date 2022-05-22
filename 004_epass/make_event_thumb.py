@@ -31,7 +31,7 @@ def round_rectangle(img, start, end, radius, fill, bg_color):
     img.paste(corner.rotate(180), (start[0] + width - radius, start[1] + height - radius))
     img.paste(corner.rotate(270), (start[0] + width - radius, start[1]))
  
-def draw_image(title, text1, text2, img_name):
+def draw_image(text1, text2, img_name):
     background = Image.new('RGB', (580,580), color = bg_color)
 
     draw = ImageDraw.Draw(background)
@@ -90,4 +90,4 @@ if __name__ == '__main__':
         print("(Usage) {} -output=output.jpg".format(sys.argv[0]))
         exit(1)
 
-    draw_image( title, text1, text2, img_name)
+    draw_image(text1, text2, img_name)
