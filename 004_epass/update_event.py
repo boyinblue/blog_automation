@@ -35,7 +35,7 @@ def load_posts():
 def write_post(goods, period, url, category):
   title = "[이벤트 정보] {} ({})".format(goods, period)
   slug = "이벤트정보-{}".format(goods)
-  link = '<p data-ke-size="size16"><a style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>더보기</a></p>'.format(url)
+  link = '<p data-ke-size="size16"><a style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>이벤트 바로가기</a></p>'.format(url)
   content = "<h2>이벤트 정보</h2>\n\
                   상품 : {}<br>\n\
                   이벤트 기간 : {}<br>\n\
