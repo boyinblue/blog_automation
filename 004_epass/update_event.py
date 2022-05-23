@@ -2,6 +2,7 @@
 
 import sys
 import os
+import copy
 
 sys.path.append("../wordpress")
 
@@ -21,19 +22,20 @@ def load_posts():
 
   # Get Posts
   ids = getPosts.getPosts(auths[0], auths[1], auths[2])
+  print("Posts :", ids)
   for id in ids:
     post = getPost.getPost(auths[0], auths[1], auths[2], id)
     arrPost.append(post)
 
 def check_exist(goods, period, url):
+  global arrPost
+
   if len(arrPost) == 0:
     load_posts()
   print("경품 :", goods)
   print("기간 :", period)
   print("URL :", url)
-  print("len(arrPost) :", len(arrPost))
   for post in arrPost:
-    print("Check ", post.title)
     if url in post.content:
       print("{}에 포함".format(post.title))
       return True
