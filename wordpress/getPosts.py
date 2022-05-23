@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-def getPosts(a, b, c):
-  print(a, b, c)
-
 def getPosts(url, id, pw):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
@@ -29,9 +26,18 @@ def getPosts(url, id, pw):
   return ids
 
 if __name__ == '__main__':
-  from GetCredential import GetCredential
+  import sys 
+  for i in range(1, len(sys.argv)):
+    if '-host=' in sys.argv[i]:
+      host = sys.argv[i][6:]
 
-#  auths = GetCredential('mesti')
-  auths = GetCredential('dhqhrtnwl')
+  if not host:
+    print("Please set host")
+    print("(Usage) {} -host=dhqhrtnwl".format(host))
+    exit(1)
+
+  from GetCredential import GetCredential
+  auths = GetCredential(host)
+
   ids = getPosts(auths[0], auths[1], auths[2])
   print("Posts :", ids)
