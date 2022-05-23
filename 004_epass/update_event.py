@@ -9,6 +9,7 @@ sys.path.append("../wordpress")
 import GetCredential
 import getPosts
 import getPost
+import newPost
 
 auths = None
 arrPost = []
@@ -27,6 +28,17 @@ def load_posts():
     post = getPost.getPost(auths[0], auths[1], auths[2], id)
     arrPost.append(post)
 
+def write_post(goods, period, url):
+  title = "[이벤트 정보] {} ({})".format(goods, period)
+  slug = "이벤트정보-{}".format(goods)
+  content = "<h2>이벤트 정보</h2>\n\
+                  상품 : {}<br>\n\
+                  이벤트 기간 : {}<br>\n\
+                  링크 : <a href={}>{}</a><br>\n".format(
+                                  goods, period, url, url)
+  newPost.newPost( auths[0], auths[1], auths[2],
+        title, slug, content)
+
 def check_exist(goods, period, url):
   global arrPost
 
@@ -36,11 +48,14 @@ def check_exist(goods, period, url):
   print("기간 :", period)
   print("URL :", url)
   for post in arrPost:
-    if url in post.content:
+    if url.strip('\'') in post.content:
       print("{}에 포함".format(post.title))
       return True
+#    else:
+#      print("{} 못찾음 {}".format(url.strip('\''), post.content))
 
-  print("발견 못함")
+  print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
+#  write_post(goods, period, url)
 
 def search_event_data(dir):
   print("search event data at ({})".format(dir))

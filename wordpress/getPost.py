@@ -13,6 +13,8 @@ def getPost(url, id, pw, post_id):
 
   return post
 
+  return post
+
 if __name__ == '__main__':
   getPost( "https://www.dhqhrtnwl.shop",
                   'esregnet0409@gmail.com',
