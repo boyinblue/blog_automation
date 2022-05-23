@@ -74,6 +74,7 @@ def upload_thumb(goods, period, url):
   return uploadFile.uploadFile(auths[0], auths[1], auths[2], tmp_fname)
 
 def write_post(post_id, goods, period, url, category, post=None):
+  thumb = []
   if post:
     thumb = post.thumbnail
 
