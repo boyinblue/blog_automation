@@ -94,6 +94,8 @@ def write_post(post_id, goods, period, url, category, post=None):
   else:
     import editPost
     post.content = content
+    post.thumbnail['link'] = img_url
+    post.thumbnail['title'] = title
     editPost.editPost( auths[0], auths[1], auths[2], post_id, post)
 
 def check_exist(goods, period, url):
