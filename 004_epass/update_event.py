@@ -10,6 +10,7 @@ import getPosts
 import getPost
 import newPost
 import getTaxonomies
+import uploadFile
 
 host = None
 auths = None
@@ -69,10 +70,18 @@ def upload_thumb(goods, period, url):
   print("Generate Thumb :", tmp_fname)
   make_event_thumb.draw_image(goods, period, tmp_fname)
 
-  return upload_file(tmp_fname, fname)
+#  return upload_file(tmp_fname, fname)
+  return uploadFile.uploadFile(auths[0], auths[1], auths[2], tmp_fname)
 
 def write_post(post_id, goods, period, url, category, post=None):
-  img_url = upload_thumb(goods, period, url)
+  if post:
+    thumb = post.thumbnail
+
+  if len(thumb) == 0:
+    print("Make thumb")
+    thumb = upload_thumb(goods, period, url)
+  img_url = thumb['link']
+
   title = "[이벤트 정보] {} ({})".format(goods, period)
   slug = "이벤트정보-{}".format(goods)
   if img_url == '':
@@ -94,8 +103,7 @@ def write_post(post_id, goods, period, url, category, post=None):
   else:
     import editPost
     post.content = content
-    post.thumbnail['link'] = img_url
-    post.thumbnail['title'] = title
+    post.thumbnail = thumb
     editPost.editPost( auths[0], auths[1], auths[2], post_id, post)
 
 def check_exist(goods, period, url):
@@ -154,6 +162,13 @@ def main():
     print("Please set host")
     print("{} -host=hostname".format(sys.argv[0]))
     exit(2)
+  elif not path:
+    print("Please set directory")
+    print("{} -dir=tmp".format(sys.argv[0]))
+    exit(3)
+  elif not os.path.isdir(path):
+    print("Cannot find dir :", path)
+    exit(4)
 
   global auths
   auths = GetCredential.GetCredential(host)
@@ -166,13 +181,7 @@ def main():
   # Load Posts
   load_posts()
 
-  if not path:
-    print("Please set directory")
-    print("{} -dir=tmp".format(sys.argv[0]))
-    exit(3)
-  elif not os.path.isdir(path):
-    print("Cannot find dir :", path)
-    exit(4)
+  # Check directory to upload
   search_event_data(path)
 
 if __name__ == '__main__':
