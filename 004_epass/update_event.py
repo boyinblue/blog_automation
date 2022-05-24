@@ -25,6 +25,7 @@ targetTerm = None
 op = 'both'   # add, edit, both
 upload_limit = 1
 upload_cnt = 0
+robot_ver = 1
 
 def checkEventCategory(post):
   "원하는 카테고리의 글인지 체크한다."
@@ -32,6 +33,16 @@ def checkEventCategory(post):
     if term.name == targetCate:
       return True
   return False
+
+def get_meta_data(content):
+ lines = content.split('\n')
+ for line in lines:
+   if 'data-goods' in line:
+     print("data-goods :", line)
+   elif 'data-period' in line:
+     print("data-period :", line)
+   elif 'data-url' in line:
+     print("data-url :", line)
 
 def load_posts():
   "모든 글들을 불러와서 그 중 원하는 카테고리의 글만 리스트화 한다."
@@ -43,6 +54,7 @@ def load_posts():
   for id in ids:
     post = getPost.getPost(auths[0], auths[1], auths[2], id)
     if checkEventCategory(post):
+      get_meta_data(post.content)
       arrPost.append(post)
 
 def upload_thumb(goods, period, url):
@@ -83,6 +95,8 @@ def edit_post(post, goods, period, url, category):
   goods_tag = "<p data-goods='{}'>상품 : {}</p>\n".format(goods, goods)
   period_tag = "<p data-period='{}'>이벤트 기간 : {}</p>\n".format(period, period)
   link_tag = '<p data-ke-size="size16"><a data-url="{}" style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>이벤트 바로가기</a></p>'.format(url, url)
+  robot_tag = '<p data-version={}> </p>'.format(robot_ver)
+
   content = "{}{}{}{}{}".format(img_tag, title_tag, goods_tag, period_tag, link_tag)
 
   import editPost
