@@ -5,6 +5,8 @@ import os
 def GetCredential(page_name='mesti'):
   filename = "../.{}".format(page_name)
   if not os.path.isfile(filename):
+    print("There is not file on", filename)
+    raise
     return None
   fp = open(filename, 'r')
 

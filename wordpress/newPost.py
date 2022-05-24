@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 
-def newPost(url, id, pw, title, slug, content, category=None):
+def newPost(url, id, pw, title, slug, content, category=None, thumb=None):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
 #  print("pw :", pw)

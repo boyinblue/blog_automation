@@ -2,6 +2,8 @@
 
 
 def editPost(url, id, pw, post_id, post):
+  print("editPost({}, {}, {})".format(url, post_id, post))
+  print("thumb :", post.thumbnail)
   url = url + "/xmlrpc.php"
 #  print("id :", id)
 #  print("pw :", pw)

@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import sys
+
 def getPost(url, id, pw, post_id):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
@@ -16,8 +18,13 @@ def getPost(url, id, pw, post_id):
 
   return post
 
+def print_usage():
+  print("(Usage) {} -host=host".format( sys.argv[0] ))
+
 if __name__ == '__main__':
-  import sys 
+  if len(sys.argv) <= 1:
+    print_usage()
+    exit(1)
   for i in range(1, len(sys.argv)):
     if '-host=' in sys.argv[i]:
       host = sys.argv[i][6:]

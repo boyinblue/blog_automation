@@ -98,13 +98,13 @@ def write_post(post_id, goods, period, url, category, post=None):
                              img_tag, goods, period, link)
   if post_id == 0:
     newPost.newPost( auths[0], auths[1], auths[2],
-        title, slug, content, category=targetTerm, thumb=thumb)
+        title, slug, content, category=targetTerm, thumb=thumb['id'])
   elif not post:
     raise
   else:
     import editPost
     post.content = content
-    post.thumbnail = thumb
+    post.thumbnail=thumb['id']
     editPost.editPost( auths[0], auths[1], auths[2], post_id, post)
 
 def check_exist(goods, period, url):
@@ -121,9 +121,11 @@ def check_exist(goods, period, url):
   if post_id == 0:
     print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
     write_post(post_id, goods, period, url, targetCate)
-  else:
-    print("[AUTO] Edit Post : {} / {} / {}".format(goods, period, url))
-    write_post(post_id, goods, period, url, targetCate, post=post)
+    return False
+
+  print("[AUTO] Edit Post : {} / {} / {}".format(goods, period, url))
+  write_post(post_id, goods, period, url, targetCate, post=post)
+  return True
 
 def search_event_data(dir):
   print("search event data at ({})".format(dir))
@@ -133,7 +135,9 @@ def search_event_data(dir):
     if filename[-4:].lower() == ".txt":
       print("")
       print("load event data :", filename)
-      load_event_data("{}/{}".format(dir,filename))
+      if not load_event_data("{}/{}".format(dir,filename)):
+        print("Successful Upload!")
+        break
 
 def load_event_data(filename):
   fp = open(filename, 'r')
@@ -147,7 +151,7 @@ def load_event_data(filename):
       event_goods = strings[1]
     elif strings[0] == "링크":
       event_url = strings[1]
-  check_exist(event_goods, event_period, event_url)
+  return check_exist(event_goods, event_period, event_url)
 
 def main():
   import sys
