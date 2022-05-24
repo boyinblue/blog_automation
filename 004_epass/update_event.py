@@ -18,6 +18,7 @@ path = None
 arrPost = []
 targetCate = "이벤트 정보"
 targetTerm = None
+op = None
 
 def checkEventCategory(post):
   for term in post.terms:
@@ -107,16 +108,21 @@ def write_post(post_id, goods, period, url, category, post=None):
     post.thumbnail=thumb['id']
     editPost.editPost( auths[0], auths[1], auths[2], post_id, post)
 
+def check_exist(url):
+  postList = []
+
+  for post in arrPost:
+    if url.strip('\'') in post.content:
+      postList.append(post.id)
+      break
+
+  return postList
+
 def check_exist(goods, period, url):
   post_id = 0
   print("경품 :", goods)
   print("기간 :", period)
   print("URL :", url)
-  for post in arrPost:
-    if url.strip('\'') in post.content:
-      print("{}에 포함".format(post.title))
-      post_id = post.id
-      break
 
   if post_id == 0:
     print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
@@ -151,6 +157,8 @@ def load_event_data(filename):
       event_goods = strings[1]
     elif strings[0] == "링크":
       event_url = strings[1]
+
+  
   return check_exist(event_goods, event_period, event_url)
 
 def main():
@@ -162,6 +170,9 @@ def main():
     elif '-dir=' in sys.argv[i]:
       global path
       path = sys.argv[i][5:]
+    elif '-op=' in sys.argv[i]:
+      global op
+      op = sys.argv[i][4:]
 
   if not host:
     print("Please set host")
