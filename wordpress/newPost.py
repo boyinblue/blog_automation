@@ -19,6 +19,8 @@ def newPost(url, id, pw, title, slug, content, category=None):
   if category:
 #    print("terms :", post.terms)
     post.terms.append(category)
+  if thumb:
+    post.thumbnail = thumb
 
   post.post_status = 'publish'
   client.call(posts.NewPost(post))

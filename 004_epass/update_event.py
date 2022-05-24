@@ -98,7 +98,7 @@ def write_post(post_id, goods, period, url, category, post=None):
                              img_tag, goods, period, link)
   if post_id == 0:
     newPost.newPost( auths[0], auths[1], auths[2],
-        title, slug, content, targetTerm)
+        title, slug, content, category=targetTerm, thumb=thumb)
   elif not post:
     raise
   else:
