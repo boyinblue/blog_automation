@@ -10,7 +10,7 @@ import getTaxonomies
 
 auths = None
 arrPost = []
-target = 'dhqhrtnwl'
+target = None
 
 def categorize(post):
   unTerm = None
@@ -41,13 +41,21 @@ def load_posts():
     post = getPost.getPost(auths[0], auths[1], auths[2], id)
     categorize(post)
 
+def print_usage():
+  print("(Usage) {} -target=dhqhrtnwl".format(sys.argv[0]))
+
 def main():
   global target
 
   for i in range(1, len(sys.argv)):
-    if 'target=' in i:
-      target = i[7:]
+    if '-target=' in sys.argv[i]:
+      target = sys.argv[i][8:]
       print("Target =", target)
+
+  if not target:
+    print("Please set target")
+    print_usage()
+    exit(1)
 
   # Get Credentials
   global auths

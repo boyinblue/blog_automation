@@ -86,9 +86,12 @@ def edit_post(post, goods, period, url, category):
   content = "{}{}{}{}{}".format(img_tag, title_tag, goods_tag, period_tag, link_tag)
 
   import editPost
+  post.title = title
   post.content = content
   if thumb_id:
     post.thumbnail=thumb['id']
+  if category:
+    post.term=category
   post.post_status = 'publish'
   editPost.editPost( auths[0], auths[1], auths[2], post.id, post)
 
@@ -114,6 +117,7 @@ def search_event_data(dir):
       load_event_data("{}/{}".format(dir,filename))
 
 def load_event_data(filename):
+  global upload_cnt
   fp = open(filename, 'r')
   line = ' '
   while line != '':
@@ -135,12 +139,15 @@ def load_event_data(filename):
         print("[AUTO] Edit Post : {} / {} / {} / {}".format(post.id, goods, period, url))
         edit_post(post, goods, period, url, targetCate)
   else:
-    if op != 'add' and op != 'both' and upload_cnt > upload_limit:
+    if op == 'add' and op != 'both':
+      return 
+    elif upload_cnt > upload_limit:
       return 
     print("[AUTO] Add Post : {} / {} / {}".format(goods, period, url))
     post_id = new_post()
     post = getPost.getPost(auths[0], auths[1], auths[2], post_id)
     edit_post(post, goods, period, url, targetCate)
+    upload_cnt = upload_cnt + 1
 
 def print_usage():
   print("{} -host=hostname -dir=tmp".format(sys.argv[0]))
