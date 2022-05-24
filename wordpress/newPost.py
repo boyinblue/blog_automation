@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-
-def newPost(url, id, pw, title, slug, content, category=None, thumb=None):
+def newPost(url, id, pw, title = None, slug = None, content = None, category=None, thumb=None):
   url = url + "/xmlrpc.php"
 #  print("id :", id)
 #  print("pw :", pw)
@@ -13,17 +12,19 @@ def newPost(url, id, pw, title, slug, content, category=None, thumb=None):
   client = Client(url, id, pw)
 
   post = WordPressPost()
-  post.title = title
-  post.slug = slug
-  post.content = content
+  if title:          
+    post.title = title
+  if slug:
+    post.slug = slug
+  if content:
+    post.content = content
   if category:
 #    print("terms :", post.terms)
     post.terms.append(category)
   if thumb:
     post.thumbnail = thumb
 
-  post.post_status = 'publish'
-  client.call(posts.NewPost(post))
+  return client.call(posts.NewPost(post))
 
 if __name__ == '__main__':
   from GetCredential import GetCredential

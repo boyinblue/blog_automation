@@ -8,25 +8,33 @@ sys.path.append("../wordpress")
 import GetCredential
 import getPosts
 import getPost
-import newPost
 import getTaxonomies
 import uploadFile
 
+# 인증 관련 전역 변수
 host = None
 auths = None
 path = None
+
+# 글 관련 전역 변수
 arrPost = []
 targetCate = "이벤트 정보"
 targetTerm = None
-op = None
+
+# 동작 관련 전역 변수
+op = 'both'   # add, edit, both
+upload_limit = 1
+upload_cnt = 0
 
 def checkEventCategory(post):
+  "원하는 카테고리의 글인지 체크한다."
   for term in post.terms:
     if term.name == targetCate:
       return True
   return False
 
 def load_posts():
+  "모든 글들을 불러와서 그 중 원하는 카테고리의 글만 리스트화 한다."
   global arrPost
 
   # Get Posts
@@ -37,32 +45,9 @@ def load_posts():
     if checkEventCategory(post):
       arrPost.append(post)
 
-def upload_file(tmp_fname, fname):
-  import paramiko
-  from scp import SCPClient, SCPException
-
-  ssh = GetCredential.GetSsh(host)
-
-  ssh_client = paramiko.SSHClient()
-  ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-  ssh_client.connect(ssh[0], username=ssh[1], password=ssh[2])
-
-  remote_path = "/var/www/wordpress/wp-content/custom/event_info"
-  url = "/wp-content/custom/event_info/{}".format(fname)
-
-  try:
-    with SCPClient(ssh_client.get_transport()) as scp:
-      scp.put(tmp_fname, remote_path, preserve_times=True)
-  except SCPException:
-    print("SCP 업로드에 실패하였습니다.")
-    print("Remote Path :", remote_path)
-    url = ''
-
-  ssh_client.close()
-
-  return url
-
 def upload_thumb(goods, period, url):
+  """thumbnail 이미지를 생성하고 업데이트 한다."""
+  """리턴값 : thumbnail 리스트 """
   import make_event_thumb
 
   fname = ''.join(filter(str.isalnum, url)) 
@@ -71,17 +56,21 @@ def upload_thumb(goods, period, url):
   print("Generate Thumb :", tmp_fname)
   make_event_thumb.draw_image(goods, period, tmp_fname)
 
-#  return upload_file(tmp_fname, fname)
   return uploadFile.uploadFile(auths[0], auths[1], auths[2], tmp_fname)
 
-def write_post(post_id, goods, period, url, category, post=None):
-  thumb = []
-  if post:
-    thumb = post.thumbnail
+def new_post():
+  import newPost
+  post = newPost.newPost( auths[0], auths[1], auths[2] )
+  return post
+
+def edit_post(post, goods, period, url, category):
+  thumb = post.thumbnail
+  thumb_id = None
 
   if len(thumb) == 0:
     print("Make thumb")
     thumb = upload_thumb(goods, period, url)
+    thumb_id = thumb['id']
   img_url = thumb['link']
 
   title = "[이벤트 정보] {} ({})".format(goods, period)
@@ -90,48 +79,29 @@ def write_post(post_id, goods, period, url, category, post=None):
     img_tag = ""
   else:
     img_tag = "<img src={}><br>\n".format(img_url)
-  link = '<p data-ke-size="size16"><a style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>이벤트 바로가기</a></p>'.format(url)
-  content = "{}\n\
-             <h2>이벤트 정보</h2>\n\
-             상품 : {}<br>\n\
-             이벤트 기간 : {}<br>\n\
-             {}\n".format(
-                             img_tag, goods, period, link)
-  if post_id == 0:
-    newPost.newPost( auths[0], auths[1], auths[2],
-        title, slug, content, category=targetTerm, thumb=thumb['id'])
-  elif not post:
-    raise
-  else:
-    import editPost
-    post.content = content
+  title_tag = "<h2>이벤트 정보</h2>\n"
+  goods_tag = "<p data-goods='{}'>상품 : {}</p>\n".format(goods, goods)
+  period_tag = "<p data-period='{}'>이벤트 기간 : {}</p>\n".format(period, period)
+  link_tag = '<p data-ke-size="size16"><a data-url="{}" style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>이벤트 바로가기</a></p>'.format(url, url)
+  content = "{}{}{}{}{}".format(img_tag, title_tag, goods_tag, period_tag, link_tag)
+
+  import editPost
+  post.content = content
+  if thumb_id:
     post.thumbnail=thumb['id']
-    editPost.editPost( auths[0], auths[1], auths[2], post_id, post)
+  post.post_status = 'publish'
+  editPost.editPost( auths[0], auths[1], auths[2], post.id, post)
 
 def check_exist(url):
+  """ 동일한 URL이 포함된 글이 있는지 살펴본다. """
   postList = []
 
   for post in arrPost:
     if url.strip('\'') in post.content:
-      postList.append(post.id)
+      postList.append(post)
       break
 
   return postList
-
-def check_exist(goods, period, url):
-  post_id = 0
-  print("경품 :", goods)
-  print("기간 :", period)
-  print("URL :", url)
-
-  if post_id == 0:
-    print("[AUTO] Write Post : {} / {} / {}".format(goods, period, url))
-    write_post(post_id, goods, period, url, targetCate)
-    return False
-
-  print("[AUTO] Edit Post : {} / {} / {}".format(goods, period, url))
-  write_post(post_id, goods, period, url, targetCate, post=post)
-  return True
 
 def search_event_data(dir):
   print("search event data at ({})".format(dir))
@@ -141,9 +111,7 @@ def search_event_data(dir):
     if filename[-4:].lower() == ".txt":
       print("")
       print("load event data :", filename)
-      if not load_event_data("{}/{}".format(dir,filename)):
-        print("Successful Upload!")
-        break
+      load_event_data("{}/{}".format(dir,filename))
 
 def load_event_data(filename):
   fp = open(filename, 'r')
@@ -152,17 +120,32 @@ def load_event_data(filename):
     line = fp.readline()
     strings = line.split('\n')[0].split('|')
     if strings[0] == "응모기간":
-      event_period = strings[1]
+      period = strings[1]
     elif strings[0] == "경품":
-      event_goods = strings[1]
+      goods = strings[1]
     elif strings[0] == "링크":
-      event_url = strings[1]
+      url = strings[1]
 
-  
-  return check_exist(event_goods, event_period, event_url)
+  postList = check_exist(url)
+  if len(postList) > 0:
+    if len(postList) > 1:
+      print("Posts are duplicated!")
+    for post in postList:
+      if op == 'edit' or op == 'both':
+        print("[AUTO] Edit Post : {} / {} / {} / {}".format(post.id, goods, period, url))
+        edit_post(post, goods, period, url, targetCate)
+  else:
+    if op != 'add' and op != 'both' and upload_cnt > upload_limit:
+      return 
+    print("[AUTO] Add Post : {} / {} / {}".format(goods, period, url))
+    post_id = new_post()
+    post = getPost.getPost(auths[0], auths[1], auths[2], post_id)
+    edit_post(post, goods, period, url, targetCate)
+
+def print_usage():
+  print("{} -host=hostname -dir=tmp".format(sys.argv[0]))
 
 def main():
-  import sys
   for i in range(1, len(sys.argv)):
     if '-host=' in sys.argv[i]:
       global host
@@ -176,11 +159,11 @@ def main():
 
   if not host:
     print("Please set host")
-    print("{} -host=hostname".format(sys.argv[0]))
+    print_usage()
     exit(2)
   elif not path:
     print("Please set directory")
-    print("{} -dir=tmp".format(sys.argv[0]))
+    print_usage()
     exit(3)
   elif not os.path.isdir(path):
     print("Cannot find dir :", path)
