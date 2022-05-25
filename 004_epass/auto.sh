@@ -4,10 +4,8 @@ EPASS_URL="https://www.e-pass.co.kr"
 
 function get_list()
 {
-  curl -H "Content-Type: application/x-www-form-urlencoded" \
-          "$EPASS_URL" | iconv -f euc-kr -t utf-8 | tee tmp/list.html
-
-  cat tmp/list.html | grep new_info | tee tmp/prime_list.dat
+  wget $EPASS_URL -O tmp/list.html
+  cat tmp/list.html | grep new_info | iconv -f euc-kr -t utf-8 | tee tmp/prime_list.dat
 
   while read line;
   do

@@ -214,10 +214,12 @@ def add_post_by_file(filename):
 
   postList = get_posts_contain_url(data['url'])
   if len(postList) == 0:
-    print("[AUTO] Add Post : {} / {} / {}".format(goods, period, url))
+    print("[AUTO] Add Post : {} / {} / {}".format(data['goods'],
+            data['period'], data['url']))
     post_id = new_post()
     post = getPost.getPost(auths[0], auths[1], auths[2], post_id)
-    edit_post(post, goods, period, url, targetCate)
+    update_post(post, data['goods'], data['period'],
+                    data['url'], targetCate)
     upload_cnt = upload_cnt + 1
     
 def new_post():
