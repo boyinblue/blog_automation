@@ -19,9 +19,11 @@ def getPost(url, id, pw, post_id):
   return post
 
 def print_usage():
-  print("(Usage) {} -host=host".format( sys.argv[0] ))
+  print("(Usage) {} -host=host -output=filename 10 20 30".format( sys.argv[0] ))
 
 if __name__ == '__main__':
+  filename = ''
+
   if len(sys.argv) <= 1:
     print_usage()
     exit(1)
@@ -30,10 +32,12 @@ if __name__ == '__main__':
       host = sys.argv[i][6:]
       from GetCredential import GetCredential
       auths = GetCredential(host)
+    elif '-output=' in sys.argv[i]:
+      filename = sys.argv[i][8:]
     else:
       if not auths:
         print("Please set host")
-        print("(Usage) {} -host=dhqhrtnwl 10 20 30".format(sys.argv[0]))
+        print_usage()
         exit(1)
 
       print("Get Post", sys.argv[i])
@@ -48,3 +52,8 @@ if __name__ == '__main__':
       print("[thumbnail]")
       for thumb_itr in post.thumbnail:
         print(thumb_itr)
+
+      if filename != '':
+        fp = open(filename, "w")
+        fp.write(post.content)
+        fp.close()
