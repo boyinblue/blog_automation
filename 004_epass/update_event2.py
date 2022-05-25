@@ -238,7 +238,8 @@ def add_post_by_file(filename):
 def new_post(data):
   import newPost
   slug = make_slug(data['goods'], data['url'])
-  post = newPost.newPost( auths[0], auths[1], auths[2], slug = slug )
+  post = newPost.newPost( auths[0], auths[1], auths[2],
+                  slug = slug, category = targetTerm )
   return post
 
 ###############################
