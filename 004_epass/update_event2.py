@@ -124,6 +124,9 @@ def get_meta_data_from_txt_file(filename):
       goods = strings[1]
     elif strings[0] == "링크":
       url = strings[1]
+
+  fp.close()
+  os.unlink(filename)
   return {'goods':goods, "period":period, "url":url}
 
 ###############################
