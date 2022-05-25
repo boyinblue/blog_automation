@@ -129,6 +129,9 @@ def get_meta_data_from_txt_file(filename):
   os.unlink(filename)
   return {'goods':goods, "period":period, "url":url}
 
+def get_unique_key_from_url(url):
+  return ''.join(filter(str.isalnum, url))
+
 ###############################
 # 썸네일 업데이트
 ###############################
@@ -138,7 +141,7 @@ def upload_thumb(goods, period, url):
   """리턴값 : thumbnail 리스트 """
   import make_event_thumb
 
-  fname = ''.join(filter(str.isalnum, url)) 
+  fname = get_unique_key_from_url(url)
   fname = "{}.jpg".format(fname)
   tmp_fname = "tmp/{}".format(fname)
   print("Generate Thumb :", tmp_fname)
@@ -149,6 +152,11 @@ def upload_thumb(goods, period, url):
 ###############################
 # 글 업데이트
 ###############################
+
+def make_slug(goods, url):
+  unique_key = get_unique_key_from_url(url)
+
+  return "이벤트정보-{}-{}".format(goods, unique_key)
 
 def update_post(post, goods, period, url, category):
   thumb = post.thumbnail
@@ -161,7 +169,7 @@ def update_post(post, goods, period, url, category):
   img_url = thumb['link']
 
   title = "[이벤트 정보] {} ({})".format(goods, period)
-  slug = "이벤트정보-{}".format(goods)
+  slug = make_slug(goods, url)
   if img_url == '':
     img_tag = ""
   else:
@@ -172,7 +180,11 @@ def update_post(post, goods, period, url, category):
   link_tag = '<p data-ke-size="size16"><a data-url="{}" style="background-color: #0040ff; color: #fff; border-radius: 30px; padding: 16px 32px; font-size: 20px; font-weight: bold; text-decoration: none;" href={}>이벤트 바로가기</a></p>'.format(url, url)
   robot_tag = '<p data-version={}> </p>'.format(robot_ver)
 
-  content = "{}{}{}{}{}".format(img_tag, title_tag, goods_tag, period_tag, link_tag)
+  content = "{}{}{}{}{}".format(title_tag,
+          goods_tag,
+          period_tag,
+          link_tag,
+          robot_tag)
 
   import editPost
   post.title = title
@@ -194,15 +206,16 @@ def add_post_by_dir(dir):
   global upload_cnt
 
   print("load event data by dir ({})".format(dir))
-  filenames = os.listdir(dir)
-  for filename in filenames:
-#    print("filename :", filename)
-    if filename[-4:].lower() != ".txt":
+  dirs = os.listdir(dir)
+  for dirname in dirs:
+    if not os.path.isdir("{}/{}".format(dir,dirname)):
       continue
-    elif upload_cnt > upload_limit:
+    elif not os.path.isfile("{}/{}/data.txt".format(dir,dirname)):
+      continue
+    elif upload_cnt >= upload_limit:
       return 
 
-    if add_post_by_file("{}/{}".format(dir,filename)):
+    if add_post_by_file("{}/{}/data.txt".format(dir,dirname)):
       upload_cnt = upload_cnt + 1
 
 def add_post_by_file(filename):
@@ -216,15 +229,16 @@ def add_post_by_file(filename):
   if len(postList) == 0:
     print("[AUTO] Add Post : {} / {} / {}".format(data['goods'],
             data['period'], data['url']))
-    post_id = new_post()
+    post_id = new_post(data)
     post = getPost.getPost(auths[0], auths[1], auths[2], post_id)
     update_post(post, data['goods'], data['period'],
                     data['url'], targetCate)
     upload_cnt = upload_cnt + 1
     
-def new_post():
+def new_post(data):
   import newPost
-  post = newPost.newPost( auths[0], auths[1], auths[2] )
+  slug = make_slug(data['goods'], data['url'])
+  post = newPost.newPost( auths[0], auths[1], auths[2], slug = slug )
   return post
 
 ###############################
