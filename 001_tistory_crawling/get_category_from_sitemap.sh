@@ -61,7 +61,9 @@ do
       echo $link
       title=""
       get_title ${link}
-      echo "[${title}](${link})\n" | tee -a ${OUTPUT_FILE}
+      echo "[${title}](${link})" | tee -a ${OUTPUT_FILE}
+      echo "" | tee -a ${OUTPUT_FILE}
+      echo "" | tee -a ${OUTPUT_FILE}
     fi
   fi
 done < ${sitemap_local}
