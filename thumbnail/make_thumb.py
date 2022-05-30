@@ -28,7 +28,6 @@ colors = {
 
 import random
 color = random.choice(list(colors.items()))[0]
-print("color :", color)
  
 def add_color(image,c,transparency):
     color = Image.new('RGB',image.size,c)
@@ -91,6 +90,10 @@ def write_image(background,color,text1,text2,foreground=''):
         add_text(background,color,text1,text2,font_size=40, logo=True)
         add_logo(background,foreground)
     return background
+
+def print_usage():
+    print("(Usage) {} -output=output.jpg -t1=title -t2=tags".format(sys.argv[0]))
+    print("(Example) {} -output=output.jpg \"-t1=GitHub API 메뉴얼\" \"-t2=#GitHub #API\"".format(sys.argv[0]))
  
 if __name__ == '__main__':
     import sys
@@ -103,11 +106,11 @@ if __name__ == '__main__':
             text2 = sys.argv[i][4:]
 
     if not img_name:
-        print("Please Set Output File Name")
-        print("(Usage) {} -output=output.jpg".format(sys.argv[0]))
-        exit(1)
+        img_name = "{}.jpg".format(text1.replace(' ', ''))
+        print("Set output filename :", img_name)
             
 #    background = write_image(background,colors[color],text1,text2,foreground=foreground)
     background = write_image(background,colors[color],text1,text2)
     add_logo(background, foreground)
     background.save(img_name) 
+    print("OK")
