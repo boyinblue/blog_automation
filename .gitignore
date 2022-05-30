@@ -10,3 +10,4 @@
 004_epass/__pycache__/
 # Byte-compiled / optimized / DLL files
 wordpress/__pycache__/
+thumbnail/tmp/

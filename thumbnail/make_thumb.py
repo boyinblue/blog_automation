@@ -3,8 +3,8 @@
 from PIL import Image, ImageDraw, ImageFont
   
 # create Image object
-text1 = 'Create Feature Image'
-text2 = 'With Python'
+text1 = None
+text2 = None
 img_name = None
 
 font = 'Nanum JangMiCe.ttf'
@@ -105,8 +105,18 @@ if __name__ == '__main__':
         elif '-t2=' in sys.argv[i]:
             text2 = sys.argv[i][4:]
 
+    import os
+    if not os.path.isdir("tmp"):
+        os.mkdir("tmp")
+
+    if not text1:
+        text1 = input("제목 :")
+    
+    if not text2:
+        text2 = input("내용 :")
+
     if not img_name:
-        img_name = "{}.jpg".format(text1.replace(' ', ''))
+        img_name = "tmp/{}.jpg".format(text1.replace(' ', ''))
         print("Set output filename :", img_name)
             
 #    background = write_image(background,colors[color],text1,text2,foreground=foreground)
