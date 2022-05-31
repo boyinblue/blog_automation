@@ -570,7 +570,7 @@ hr {
 }
 .cover-thumbnail-list-1 ul li .thum img {
 	width: 100%;
-	height: auto;
+	height: 100%;
 }
 .cover-thumbnail-list-1 ul li .title {
 	display: block;
@@ -612,7 +612,7 @@ hr {
 }
 .cover-special-contents ul li .thum img {
 	max-width: 100%;
-	height: auto;
+	height: 100%;
 }
 .cover-special-contents ul li .box {
 	display: block;
@@ -958,8 +958,8 @@ hr {
 .post-type-text .post-item .thum img {
 	position: relative;
 	width: 100%;
-	height: auto;
-	margin: -29px 0 0;
+	height: 100%;
+	margin: 0 0 0 0;
 }
 .post-type-text .post-item .title {
 	width: auto;
