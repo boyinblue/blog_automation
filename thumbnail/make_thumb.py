@@ -9,8 +9,8 @@ img_name = None
 
 font = 'Nanum JangMiCe.ttf'
 
-background = Image.open('default.jpg')
-foreground = Image.open('logo.png')
+logo_fname = ''
+target_dir = ''
  
 #create the coloured overlays
 colors = {
@@ -106,8 +106,12 @@ if __name__ == '__main__':
             text2 = sys.argv[i][4:]
 
     import os
-    if not os.path.isdir("tmp"):
-        os.mkdir("tmp")
+    home_dir = os.path.expanduser('~')
+    target_dir = "{}/사진".format(home_dir)
+    if not os.path.isdir("{}/사진".format(home_dir)):
+        if not os.path.isdir("tmp"):
+            os.mkdir("tmp")
+        target_dir = "tmp"
 
     if not text1:
         text1 = input("제목 :")
@@ -115,10 +119,17 @@ if __name__ == '__main__':
     if not text2:
         text2 = input("내용 :")
 
+    if not logo_fname:
+        logo_fname = input("로고 :")
+        if logo_fname == "":
+            logo_fname = "logo.png"
+
     if not img_name:
-        img_name = "tmp/{}.jpg".format(text1.replace(' ', ''))
+        img_name = "{}/{}.jpg".format(target_dir, text1.replace(' ', ''))
         print("Set output filename :", img_name)
             
+    background = Image.open('default.jpg')
+    foreground = Image.open(logo_fname)
 #    background = write_image(background,colors[color],text1,text2,foreground=foreground)
     background = write_image(background,colors[color],text1,text2)
     add_logo(background, foreground)
