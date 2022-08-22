@@ -10,6 +10,7 @@ img_name = None
 font = 'Nanum JangMiCe.ttf'
 
 logo_fname = ''
+background_fname = ''
 target_dir = ''
  
 #create the coloured overlays
@@ -94,7 +95,24 @@ def write_image(background,color,text1,text2,foreground=''):
 def print_usage():
     print("(Usage) {} -output=output.jpg -t1=title -t2=tags".format(sys.argv[0]))
     print("(Example) {} -output=output.jpg \"-t1=GitHub API 메뉴얼\" \"-t2=#GitHub #API\"".format(sys.argv[0]))
- 
+
+def select_image(type):
+    i = 0
+    if not os.path.isdir(type):
+        print("Invalid Type")
+        return None
+    
+    filelist = []
+    for (path, dir, files) in os.walk(type):
+        filelist += [file for file in files if file.endswith('.png') or file.endswith('.jpg')]
+
+    for file in filelist:
+        print("[{}] {}".format(i, file))
+        i = i + 1
+
+    index = input("Select Number : ".format(type))
+    return "{}/{}".format(type, filelist[int(index)])
+
 if __name__ == '__main__':
     import sys
     for i in range(1, len(sys.argv)):
@@ -114,21 +132,26 @@ if __name__ == '__main__':
         target_dir = "tmp"
 
     if not text1:
-        text1 = input("제목 :")
+        text1 = input("제목 : ")
     
     if not text2:
-        text2 = input("내용 :")
+        text2 = input("내용 : ")
 
     if not logo_fname:
-        logo_fname = input("로고 :")
+        logo_fname = select_image('logo')
         if logo_fname == "":
-            logo_fname = "logo.png"
+            logo_fname = "logo/default.png"
+
+    if not background_fname:
+        background_fname = select_image('background')
+        if background_fname == "":
+            background_fname = "background/default.jpg"
 
     if not img_name:
         img_name = "{}/{}.jpg".format(target_dir, text1.replace(' ', ''))
         print("Set output filename :", img_name)
             
-    background = Image.open('default.jpg')
+    background = Image.open(background_fname)
     foreground = Image.open(logo_fname)
 #    background = write_image(background,colors[color],text1,text2,foreground=foreground)
     background = write_image(background,colors[color],text1,text2)
