@@ -7,10 +7,9 @@ text1 = None
 text2 = None
 img_name = None
 
-font = 'Nanum JangMiCe.ttf'
-
 logo_fname = ''
 background_fname = ''
+font = ''
 target_dir = ''
  
 #create the coloured overlays
@@ -48,7 +47,7 @@ def center_text(img,font,text1,text2,fill1,fill2):
     draw.text(p2, text2, fill=fill2, font=font)
     return img
  
-def add_text(img,color,text1,text2,logo=False,font=font,font_size=75):
+def add_text(img,color,text1,text2,logo=False,font=font,font_size=200):
     draw = ImageDraw.Draw(img)
  
     p_font = color['p_font']
@@ -62,7 +61,7 @@ def add_text(img,color,text1,text2,logo=False,font=font,font_size=75):
         while True:
             stFont = ImageFont.truetype(font,size=font_size)
             if not center_text(img,stFont,text1,text2,p_font,s_font):
-                print("Adjust size :", font_size)
+#                print("Adjust size :", font_size)
                 font_size = font_size - 2
                 continue
             else:
@@ -83,12 +82,12 @@ def add_logo(background,foreground):
     background.paste(foreground, img_offset, foreground)
     return background
  
-def write_image(background,color,text1,text2,foreground=''):
+def write_image(background,color,text1,text2,foreground='',font=font):
     background = add_color(background,color['c'],25)
     if not foreground:
-        add_text(background,color,text1,text2,font_size=40)
+        add_text(background,color,text1,text2,font=font,font_size=200)
     else:
-        add_text(background,color,text1,text2,font_size=40, logo=True)
+        add_text(background,color,text1,text2,font=font,font_size=200, logo=True)
         add_logo(background,foreground)
     return background
 
@@ -105,6 +104,23 @@ def select_image(type):
     filelist = []
     for (path, dir, files) in os.walk(type):
         filelist += [file for file in files if file.endswith('.png') or file.endswith('.jpg')]
+
+    for file in filelist:
+        print("[{}] {}".format(i, file))
+        i = i + 1
+
+    index = input("Select Number : ".format(type))
+    return "{}/{}".format(type, filelist[int(index)])
+
+def select_font(type):
+    i = 0
+    if not os.path.isdir(type):
+        print("Invalid Type")
+        return None
+    
+    filelist = []
+    for (path, dir, files) in os.walk(type):
+        filelist += [file for file in files if file.endswith('.ttf')]
 
     for file in filelist:
         print("[{}] {}".format(i, file))
@@ -147,6 +163,11 @@ if __name__ == '__main__':
         if background_fname == "":
             background_fname = "background/default.jpg"
 
+    if not font:
+        font = select_font('fonts')
+        if font == "":
+            font = 'fonts/Nanum JangMiCe.ttf'
+
     if not img_name:
         img_name = "{}/{}.jpg".format(target_dir, text1.replace(' ', ''))
         print("Set output filename :", img_name)
@@ -154,7 +175,7 @@ if __name__ == '__main__':
     background = Image.open(background_fname)
     foreground = Image.open(logo_fname)
 #    background = write_image(background,colors[color],text1,text2,foreground=foreground)
-    background = write_image(background,colors[color],text1,text2)
+    background = write_image(background,colors[color],text1,text2,font=font)
     add_logo(background, foreground)
     background.save(img_name) 
     print("OK")
