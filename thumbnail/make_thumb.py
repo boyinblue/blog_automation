@@ -34,38 +34,47 @@ def add_color(image,c,transparency):
     mask = Image.new('RGBA',image.size,(0,0,0,transparency))
     return Image.composite(image,color,mask).convert('RGB')
  
-def center_text(img,font,text1,text2,fill1,fill2):
+def center_text(img,font1,font2,text1,text2,fill1,fill2):
     draw = ImageDraw.Draw(img)
     w,h = img.size
-    t1_width, t1_height = draw.textsize(text1, font)
+    t1_width, t1_height = draw.textsize(text1, font1)
     if t1_width > ( w - 10 ):
-        return None
-    t2_width, t2_height = draw.textsize(text2, font)
+        return None, font1
+    t2_width, t2_height = draw.textsize(text2, font2)
+    if t2_width > ( w - 10 ):
+        return None, font2
     p1 = ((w-t1_width)/2,h // 3)
     p2 = ((w-t2_width)/2,h // 3 + h // 5)
-    draw.text(p1, text1, fill=fill1, font=font)
-    draw.text(p2, text2, fill=fill2, font=font)
-    return img
+    draw.text(p1, text1, fill=fill1, font=font1)
+    draw.text(p2, text2, fill=fill2, font=font2)
+    return img, font1
  
-def add_text(img,color,text1,text2,logo=False,font=font,font_size=200):
+def add_text(img,color,text1,text2,logo=False,font=font,p_font_size=200,s_font_size=200):
     draw = ImageDraw.Draw(img)
  
     p_font = color['p_font']
     s_font = color['s_font']
-     
+
     # starting position of the message
     img_w, img_h = img.size
     height = img_h // 3
 
     if logo == False:
         while True:
-            stFont = ImageFont.truetype(font,size=font_size)
-            if not center_text(img,stFont,text1,text2,p_font,s_font):
-#                print("Adjust size :", font_size)
-                font_size = font_size - 2
-                continue
-            else:
-                break
+            stFont1 = ImageFont.truetype(font,size=p_font_size)
+            stFont2 = ImageFont.truetype(font,size=s_font_size)
+            retval, msg = center_text(img,stFont1,stFont2,
+                            text1, text2, p_font, s_font)
+            if not retval:
+                if msg == stFont1:
+#                   print("Adjust p_size :", p_font_size)
+                    p_font_size = p_font_size - 2
+                    continue
+                elif msg == stFont2:
+#                   print("Adjust s_size :", s_font_size)
+                    s_font_size = s_font_size - 2
+                    continue
+            break
     else:
         stFont = ImageFont.truetype(font,size=font_size)
         text1_offset = (img_w // 4, height)
@@ -85,9 +94,9 @@ def add_logo(background,foreground):
 def write_image(background,color,text1,text2,foreground='',font=font):
     background = add_color(background,color['c'],25)
     if not foreground:
-        add_text(background,color,text1,text2,font=font,font_size=200)
+        add_text(background,color,text1,text2,font=font,p_font_size=200,s_font_size=200)
     else:
-        add_text(background,color,text1,text2,font=font,font_size=200, logo=True)
+        add_text(background,color,text1,text2,font=font,p_font_size=200,s_font_size=200,logo=True)
         add_logo(background,foreground)
     return background
 
