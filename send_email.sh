@@ -47,7 +47,7 @@ fi
 cp ${EMAIL_MSG_HEADER} ${TEMP_FILE}
 cat ${BODY_PATH} >> ${TEMP_FILE}
 
-if [ -e ${PREV_EMAIL_PATH} ]; then
+if [ "{PREV_EMAIL_PATH}" == "" ] && [ -e ${PREV_EMAIL_PATH} ]; then
   diff=$(diff $PREV_EMAIL_PATH $TEMP_FILE)
 else
   diff="First Send"
@@ -58,5 +58,7 @@ if [ "${diff}" == "" ]; then
 else
   echo "Need to send email"
   cat ${TEMP_FILE} | ssmtp -t -v
-  cp ${TEMP_FILE} ${PREV_EMAIL_PATH}
+  if [ "${PREV_EMAIL_PATH}" != "" ]; then
+    cp ${TEMP_FILE} ${PREV_EMAIL_PATH}
+  fi
 fi
