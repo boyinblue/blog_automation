@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 from PIL import Image, ImageDraw, ImageFont
   
 # create Image object
@@ -138,6 +139,26 @@ def select_font(type):
     index = input("Select Number : ".format(type))
     return "{}/{}".format(type, filelist[int(index)])
 
+def get_target_dir():
+    home_dir = os.path.expanduser('~')
+
+    # "~/사진" 디렉토리가 존재하면 사용한다.
+    target_dir = "{}/사진".format(home_dir)
+    if os.path.isdir(target_dir):
+        return target_dir
+
+    # "~/Picture" 디렉토리가 존재하면 사용한다.
+    target_dir = "{}/Pictures".format(home_dir)
+    if os.path.isdir(target_dir):
+        return target_dir
+
+    # 없으면 하위디렉토리의 tmp 디렉토리를 사용한다.
+    target_dir = "tmp"
+    if not os.path.isdir(target_dir):
+        os.mkdir("tmp")
+
+    return target_dir
+
 if __name__ == '__main__':
     import sys
     for i in range(1, len(sys.argv)):
@@ -148,13 +169,7 @@ if __name__ == '__main__':
         elif '-t2=' in sys.argv[i]:
             text2 = sys.argv[i][4:]
 
-    import os
-    home_dir = os.path.expanduser('~')
-    target_dir = "{}/사진".format(home_dir)
-    if not os.path.isdir("{}/사진".format(home_dir)):
-        if not os.path.isdir("tmp"):
-            os.mkdir("tmp")
-        target_dir = "tmp"
+    target_dir = get_target_dir()
 
     if not text1:
         text1 = input("제목 : ")
