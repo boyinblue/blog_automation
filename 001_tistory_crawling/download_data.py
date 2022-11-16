@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import os
 import pprint
@@ -111,7 +113,7 @@ def main():
 		os.mkdir("tmp")
 
 	# Set RecursionLimit to avoid unexpected exit
-	sys.setrecursionlimit(2000)
+	sys.setrecursionlimit(100000)
 
 	# Download first page of my blog(recursive function call)
 	download_page("index.html", blog_url + "/index.html", "/")
