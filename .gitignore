@@ -8,6 +8,8 @@
 004_epass/js
 004_epass/tmp
 004_epass/__pycache__/
+005_epass_ver2/tmp
+005_epass_ver2/__pycache__/
 # Byte-compiled / optimized / DLL files
 wordpress/__pycache__/
 thumbnail/tmp/
