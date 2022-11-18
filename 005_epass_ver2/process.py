@@ -66,6 +66,8 @@ def write_info_by_exp_date(dic):
             return
     
     fp = open(info_fname_by_exp_dat, "a")
+    fp.write("\n")
+    fp.write("<hr>")
     fp.write(dic['md'])
     fp.close()
 
