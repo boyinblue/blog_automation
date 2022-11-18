@@ -51,6 +51,10 @@ def write_info_by_exp_date(dic):
     info_fname_by_exp_dat = "{}{}.md".format(MD_FILE_SAVE_PATH, exp_date_str)
     if not os.path.exists(info_fname_by_exp_dat):
         fp = open(info_fname_by_exp_dat, "w")
+        fp.write("---\n")
+        fp.write("title: {} 종료되는 이벤트 정보".format(exp_date_str))
+        fp.write("description: {}에 종료되는 이벤트 정보들을 제공합니다.".format(exp_date_str))
+        fp.write("---\n")
         fp.write(dic['md'])
         return
     fp = open(info_fname_by_exp_dat, "r")
