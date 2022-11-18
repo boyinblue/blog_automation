@@ -2,6 +2,7 @@
 
 import url_preview
 import re
+from datetime import datetime
 
 EPASS_URL = "https://www.e-pass.co.kr"
 
@@ -12,7 +13,7 @@ p_new_data = re.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}")
 """ 이벤트 정보를 추출하기 위한 정규 표현식 """
 p_meta_tag = re.compile("<meta name=\"description\" content=\".*? />")
 p_title = re.compile("\"1\..*? 2\.")
-p_period = re.compile(" 2\..*? 3\.")
+p_period = re.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}")
 p_product = re.compile(" 3\..*? />")
 
 """ 이벤트 페이지를 추출하기 위한 정규 표현식 """
@@ -43,10 +44,10 @@ def get_info(lines, dic):
             continue
 #        print(extracted)
         title = p_title.findall(line)[0][3:-3]
-        period = p_period.findall(line)[0][3:-3]
+        period = p_period.findall(line)[0]
         product = p_product.findall(line)[0][3:-4]
         dic['title'] = title
-        dic['period'] = period
+        dic['period'] = datetime.strptime(period, "%Y-%m-%d")
         dic['product'] = product
 #        print("'{}'\n'{}'\n'{}'\n".format(title, period, product))
 
@@ -95,13 +96,17 @@ if __name__ == '__main__':
 
     """ ID로부터 정보 가져오기 """
     for id in ids:
-        dic = {}
+        dic = {"id": "", "url": "", "og:title": "", "og:image": "", "og:description": ""}
         import sys
-        sys.stdout = open("tmp/{}.log".format(id), 'w')
         print("ID :", id)
-        if os.path.exists("tmp/{}.pkl".format(id)):
-            print("Skip!")
-            continue
+        fp_log = open("tmp/{}.log".format(id), 'w')
+        sys.stdout = fp_log
+        sys.stderr = fp_log
+#        if os.path.exists("tmp/{}.pkl".format(id)):
+#            print("Skip!")
+#            sys.stdout = sys.__stdout__
+#            sys.stderr = sys.__stderr__
+#            continue
         dic['id'] = id
         url = "{}/event/new_info.asp?InNo={}".format(EPASS_URL, id)
         lines = url_preview.get_text_from_url(url).splitlines()
@@ -111,8 +116,12 @@ if __name__ == '__main__':
         get_info(lines, dic)
 #        print(lines)
         get_event_page(id, dic)
+        dic['md'] = url_preview.make_preview(dic)
         print(dic)
         print("###########################")
         print("")
 
         save_dictionary_to_file(id, dic)
+
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
