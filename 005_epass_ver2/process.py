@@ -54,6 +54,8 @@ def write_info_by_exp_date(dic):
         fp.write("---\n")
         fp.write("title: {} 종료되는 이벤트 정보\n".format(exp_date_str))
         fp.write("description: {}에 종료되는 이벤트 정보들을 제공합니다.\n".format(exp_date_str))
+        fp.write("category: event\n")
+        fp.write("image: /assets/images/event/logo.png\n")
         fp.write("---\n")
         fp.write(dic['md'])
         return
