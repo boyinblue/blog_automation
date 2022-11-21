@@ -102,11 +102,11 @@ if __name__ == '__main__':
         fp_log = open("tmp/{}.log".format(id), 'w')
         sys.stdout = fp_log
         sys.stderr = fp_log
-#        if os.path.exists("tmp/{}.pkl".format(id)):
-#            print("Skip!")
-#            sys.stdout = sys.__stdout__
-#            sys.stderr = sys.__stderr__
-#            continue
+        if os.path.exists("tmp/{}.pkl".format(id)):
+            print("Skip!")
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            continue
         dic['id'] = id
         url = "{}/event/new_info.asp?InNo={}".format(EPASS_URL, id)
         lines = url_preview.get_text_from_url(url).splitlines()

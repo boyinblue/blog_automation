@@ -10,7 +10,7 @@ from datetime import datetime
 import sys
 import glob
 
-MD_FILE_SAVE_PATH = "../../boyinblue.github.io/_pages/event/"
+MD_FILE_SAVE_PATH = "../../boyinblue.github.io/_posts/event/"
 
 """ Dictionary 저장 및 로드 관련 """
 def load_dic(filename):
