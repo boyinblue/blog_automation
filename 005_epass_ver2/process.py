@@ -48,7 +48,7 @@ def write_info_by_exp_date(dic):
         print("There is no md key")
         return
     exp_date_str = get_string_from_date(dic['period'])
-    info_fname_by_exp_dat = "{}{}.md".format(MD_FILE_SAVE_PATH, exp_date_str)
+    info_fname_by_exp_dat = "{}{}-event.md".format(MD_FILE_SAVE_PATH, exp_date_str)
     if not os.path.exists(info_fname_by_exp_dat):
         fp = open(info_fname_by_exp_dat, "w")
         fp.write("---\n")
